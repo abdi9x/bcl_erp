@@ -17,7 +17,7 @@ $inv = $data;
                     <span>{{config('app.name')}}</span>
                 </div><!--end col-->
                 <div class="col text-right">
-                    <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#md_perbaikan_inv"><i class="mdi mdi-wrench"></i> Perbaikan/Perawatan Inventaris</button>
+                    <!-- <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#md_perbaikan_inv"><i class="mdi mdi-wrench"></i> Perbaikan/Perawatan Inventaris</button> -->
                     @can('Tambah Inventaris')
                     <button class="btn btn-sm btn-purple" data-toggle="modal" data-target="#md_tambah_inv"><i class="mdi mdi-plus"></i> Tambah Inventaris</button>
                     @endcan
@@ -306,94 +306,6 @@ $inv = $data;
         </div>
     </div>
 </div>
-<div class="modal fade" id="md_perbaikan_inv" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-dark">
-                <h6 class="modal-title m-0 text-white" id="exampleModalDefaultLabel">Perbaikan/Perawatan</h6>
-                <button type="button" class="close " data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true"><i class="la la-times text-light"></i></span>
-                </button>
-            </div>
-            <form action="{{route('expense.store')}}" method="POST">
-                @csrf
-                <div class="modal-body" id="">
-                    <div class="row">
-                        <div class="col-md-3 col-sm-6">
-                            <div class="form-group">
-                                <label for="tgl_transaksi">Tanggal Transaksi</label>
-                                <input id="tgl_transaksi" name="tgl_transaksi" autocomplete="off" required type="text" class="form-control datePicker">
-                            </div>
-                        </div>
-                    </div>
-                    <hr class="hr-dashed mt-0">
-
-                    <div class="row">
-                        <table class="table" id="tb_biaya">
-                            <thead class="bg-soft-primary">
-                                <tr>
-                                    <th>Tipe Pengeluaran</th>
-                                    <th>Aset/Inventory</th>
-                                    <th>Deskripsi</th>
-                                    <th>Total</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody data-repeater-item="">
-                                <tr data-id="0">
-                                    <td width="25%">
-                                        <select class="select2" name="akun[]" required>
-                                            <option value="5-10101">Perbaikan/perawatan inventaris kamar atau bangunan</option>
-                                        </select>
-                                    </td>
-                                    <td width="30%">
-                                        <select class="select2 select2-multiple" multiple="multiple" name="akun_subledger[0][]" id="akun_subledger" data-tags="true" data-allow-clear="true">
-                                            @foreach ($inv as $data)
-                                            <option value="{{$data->inv_number}}">{{$data->name}}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="deskripsi[]">
-                                    </td>
-                                    <td width="15%">
-                                        <input type="text" class="form-control inputmask" data-inputmask-prefix="Rp " name="jumlah[]">
-                                    </td>
-                                    <td class="text-center" width="1%">
-                                        <a href="javascript:removelist(0)" title="Remove List"><i class="fas fa-minus text-danger"></i></a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col-sm-12">
-                            <button type="button" onclick="createrow()" class="btn btn-outline-success btn-sm">
-                                <span class="fa fa-plus"></span> Tambah Data
-                            </button>
-                        </div>
-                    </div>
-                    <hr class="hr-dashed mt-0">
-                    <div class="row">
-                        <div class="col-sm-6">
-
-                        </div>
-                        <div class="col-sm-3 text-right">
-                            <label class="font-weight-bold">Total Pengeluaran</label>
-                        </div>
-                        <div class="col-sm-3 text-right">
-                            <label id="amm_debet">Rp 0</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tutup</button>
-                    <button type="submit" id="bt_simpan" class="btn btn-dark btn-sm">Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 @endsection
 @section('pagescript')
 <script>
@@ -403,7 +315,7 @@ $inv = $data;
         var table_bb = $("#tb_kamar").DataTable({
             order: [
                 [4, 'asc'],
-                [0, 'asc']
+                [8, 'asc']
             ],
             "paging": false,
             "info": false,
