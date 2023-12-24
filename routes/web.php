@@ -84,6 +84,7 @@ Route::middleware('auth')->group(function () {
         });
         Route::post('/rooms/sewa', [tr_renterController::class, 'sewa'])->name('rooms.sewa');
         Route::get('/rooms', [RoomsController::class, 'index'])->name('rooms');
+        ROute::any('/transaksi', [tr_renterController::class, 'index'])->name('transaksi.index');
     });
     Route::group(['middleware' => ['role:Administrator']], function () {
         route::get('/users', [UsersController::class, 'index'])->name('users.index');

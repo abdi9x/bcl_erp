@@ -19,4 +19,6 @@ class Rooms extends Model
     //     'tgl_mulai' => 'date:Y-m-d',
     //     'tgl_selesai' => 'date:Y-m-d'
     // ];
+    protected $table = 'rooms';
+    protected $primaryKey = 'id';
 }

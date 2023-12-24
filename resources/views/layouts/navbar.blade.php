@@ -20,6 +20,12 @@
                 <li class="nav-item"><a class="nav-link" href="{{route('renter.index')}}"><i class="ti-control-record"></i>Daftar Penyewa</a></li>
             </ul>
         </li>
+        <li>
+            <a href="javascript: void(0);"><i data-feather="credit-card" class="align-self-center menu-icon"></i><span>Transaksi</span><span class="menu-arrow"><i class="mdi mdi-chevron-right"></i></span></a>
+            <ul class="nav-second-level" aria-expanded="false">
+                <li class="nav-item"><a class="nav-link" href="{{route('transaksi.index')}}"><i class="ti-control-record"></i>Transaksi Sewa</a></li>
+            </ul>
+        </li>
         @endhasrole
         @hasrole('Keuangan|Admin Kamar|Administrator')
         <hr class="hr-dashed hr-menu">

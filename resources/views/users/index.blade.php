@@ -103,7 +103,7 @@
     </div>
 </div>
 <div class="modal fade bd-example-modal-xl" id="md_tambah" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form method="POST" action="{{route('users.store')}}">
                 @csrf
@@ -114,7 +114,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="col-md-12 col-lg-4">
+                    <div class="col-md-12 col-lg-12">
                         <div class="form-group">
                             <label for="name">Nama</label>
                             <input type="text" name="name" class="form-control" placeholder="name">
@@ -135,7 +135,7 @@
 
                         <div class="form-group">
                             <label for="password-confirm">Confirm Password</label>
-                            <input type="password-confirm" name="password" class="form-control" placeholder="Password">
+                            <input type="password" name="password" class="form-control" placeholder="Password">
                         </div>
                     </div>
                 </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\FinJurnalController as ControllersFinJurnalController;
 use App\Models\Fin_jurnal;
 use App\Models\Pricelist;
 use App\Models\renter;
+use App\Models\Rooms;
 use App\Models\tr_renter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,9 +16,37 @@ class tr_renterController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if (isset($request->filter)) {
+            $start = explode('s/d', $request->filter)[0];
+            $end = explode('s/d', $request->filter)[1];
+        } else {
+            $start = date('Y-m-d', strtotime('first day of january this year'));
+            $end = date('Y-m-d', strtotime('last day of december this year'));
+        }
+        $data = tr_renter::with('renter')->with('room')->whereBetween('tanggal', [$start, $end])->get();
+        $category = DB::table('room_category')->get();
+        $rooms = Rooms::leftjoin('room_category', 'rooms.room_category', '=', 'room_category.id_category')
+            ->select('rooms.*', 'room_category.category_name as category_name')->get();
+        $renter = renter::all();
+        $belum_lunas = Fin_jurnal::leftjoin('tr_renter', 'tr_renter.trans_id', '=', 'fin_jurnal.doc_id')
+            ->leftjoin('renter', 'renter.id', '=', 'tr_renter.id_renter')
+            ->select(
+                'fin_jurnal.*',
+                'renter.nama',
+                'renter.id',
+                'tr_renter.harga',
+                DB::raw('sum( kredit ) AS dibayar'),
+                DB::raw('tr_renter.harga - sum( kredit ) AS kurang')
+            )->where('fin_jurnal.identity', 'regexp', 'pemasukan|sewa kamar')
+
+            ->groupby('fin_jurnal.doc_id')
+            ->havingRaw('(tr_renter.harga - sum(kredit)) > 0')
+            ->orderby('fin_jurnal.tanggal', 'DESC')
+            ->get();
+        // return response()->json($data);
+        return view('transaksi.index', compact('belum_lunas', 'data', 'category', 'rooms', 'renter', 'start', 'end'));
     }
 
     /**
@@ -171,10 +200,10 @@ class tr_renterController extends Controller
             ]);
             DB::commit();
             // return response()->json($request);
-            return redirect()->route('rooms')->with(['success' => 'Kamar berhasil disewa']);
+            return back()->with(['success' => 'Kamar berhasil disewa']);
         } catch (\Throwable $th) {
             DB::rollBack();
-            return redirect()->route('rooms')->with(['error' => $th->getMessage()]);
+            return back()->with(['error' => $th->getMessage()]);
         }
     }
     public function get_no_trans()

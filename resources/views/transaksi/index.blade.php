@@ -6,21 +6,19 @@
 
 use carbon\carbon;
 
-$categories = $category;
-$rooms = $data;
+$data = $data;
 ?>
 <div class="row">
     <div class="col-sm-12">
         <div class="page-title-box">
             <div class="row">
                 <div class="col">
-                    <h4 class="page-title">Daftar Kamar</h4>
+                    <h4 class="page-title">Transaksi Sewa</h4>
                     <span>{{config('app.name')}}</span>
                 </div><!--end col-->
                 <div class="col-auto align-self-center">
-                    
-                    <button class="btn btn-sm btn-danger waves-effect waves-light" data-toggle="modal" data-target="#md_filter" id="bt_filter">
-                        <i class="mdi mdi-plus"></i> Tambah Kamar
+                    <button class="btn btn-outline-dashed btn-success waves-effect waves-light" data-toggle="modal" data-target="#md_sewa" id="bt_sewa">
+                        <i class="mdi mdi-check-all"></i> Sewa Kamar
                     </button>
                 </div><!--end col-->
             </div><!--end row-->
@@ -28,13 +26,66 @@ $rooms = $data;
     </div><!--end col-->
 </div><!--end row-->
 
+@if($belum_lunas->count()>0)
+<div class="row mb-2">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header bg-danger">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h4 class="card-title text-white">Transaksi Belum Lunas</h4>
+                    </div>
+
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive-sm mb-3">
+                    <table class="table table-sm mb-0 table-hover" data-page-length="50" id="tb_pending_tr">
+                        <thead class="thead-secondary bg-light">
+                            <tr>
+                                <th class="" width="25px"><b>No</b></th>
+                                <th class=""><b>Tanggal</b></th>
+                                <th class=""><b>Nomor</b></th>
+                                <th class=" "><b>Tipe</b></th>
+                                <th class=" "><b>Catatan</b></th>
+                                <th class="text-right"><b>Nominal</b></th>
+                                <th class="text-right"><b>Kurang</b></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $no = 1;
+                            foreach ($belum_lunas as $value) {
+                            ?>
+                                <tr>
+                                    <td><?= $no ?></td>
+                                    <td><?= $value->tanggal ?></td>
+                                    <td><?= $value->doc_id ?></td>
+                                    <td><?= $value->identity == 'Sewa Kamar' ? 'Pendapatan Sewa' : 'Pendapatan Lain' ?></td>
+                                    <td><?= $value->catatan ?></td>
+                                    <td class="text-right">Rp <?= number_format($value->harga, 2) ?></td>
+                                    <td class="text-right text-danger font-weight-bold">Rp <?= number_format($value->kurang, 2) ?></td>
+                                </tr>
+                            <?php
+                                $no++;
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+                <small class="text-danger">*Untuk melakukan pelunasan silahkan melalui menu Keuangan -> Pemasukan</small>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header bg-dark">
                 <div class="row align-self-center">
                     <div class="col align-self-center">
-                        <h4 class="card-title text-white">Daftar Kamar</h4>
+                        <h4 class="card-title text-white">Daftar Transaksi</h4>
                     </div>
                     <div class="col-auto align-self-center">
 
@@ -46,7 +97,17 @@ $rooms = $data;
                             <a class="dropdown-item btn_epdf" href="#">PDF</a>
                             <a class="dropdown-item btn_eprint" href="#">Print</a>
                         </div>
-
+                    </div>
+                    <div class="col-auto align-self-center">
+                        <a href="javascript:void(0)" class="btn btn-sm btn-light" id="filter_faktur">
+                            <span class="ay-name" id="Day_Name">Today:</span>&nbsp;
+                            <span class="" id="Select_date">Jan 11</span>
+                            <i data-feather="calendar" class="align-self-center icon-xs ml-1"></i>
+                        </a>
+                        <form id="f_filter_tgl" action="{{route('transaksi.index')}}" method="POST">
+                            @csrf
+                            <input type="hidden" name="filter" id="filter">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -59,71 +120,29 @@ $rooms = $data;
                                     <thead class="thead-info bg-info">
                                         <tr class="text-white">
                                             <th class="text-center text-white">No</th>
-                                            <th class="text-center text-white">Nomor Kamar</th>
-                                            <th class="text-white">Tipe Kamar</th>
+                                            <th class="text-center text-white">Tgl. Trans</th>
+                                            <th class="text-white">Kode Trans.</th>
+                                            <th class="text-white">No. Kamar</th>
                                             <th class="text-white">Penyewa</th>
+                                            <th class="text-white">Jangka Sewa</th>
                                             <th class="text-white">Periode</th>
-                                            <th class="text-white">Durasi</th>
-                                            <th class="text-white">Catatan</th>
-                                            <th class="text-white hidden">Status</th>
-                                            <th class="text-white hidden">Order</th>
-                                            <th></th>
+                                            <th class="text-white text-right">Harga Sewa</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
                                         $no = 1;
                                         ?>
-                                        @foreach($rooms as $room)
-                                        <?php
-                                        if (isset($room->jangka_sewa)) {
-                                            $periode = $room->tgl_mulai . ' s/d ' . $room->tgl_selesai;
-                                            $status = 'Terisi';
-                                            $order = 2;
-                                            $class = 'success';
-                                            $selesai = Carbon::parse($room->tgl_selesai);
-                                            $now = Carbon::now();
-                                            $diff = $selesai->diffInDays($now);
-                                            if ($diff <= 7) {
-                                                $message = '<i class="fas fa-exclamation-triangle faa faa-flash animated text-danger"></i>';
-                                            } else {
-                                                $message = '';
-                                            }
-                                        } else {
-                                            $periode = '';
-                                            $status = 'Kosong';
-                                            $class = 'warning';
-                                            $message = '';
-                                            $order = 1;
-                                        }
-                                        if ($room->kurang > 0 and $room->kurang != null) {
-                                            $kurang = ' <span class="text-danger">(Belum Lunas)</span>';
-                                        } else {
-                                            $kurang = "";
-                                        }
-                                        ?>
+                                        @foreach($data as $data)
                                         <tr>
                                             <td class="text-center">{{ $no }}</td>
-                                            <td class="text-center"><span class="badge badge-{{$class}}">{{ $room->room_name }}</span></td>
-                                            <td>{{$room->category_name}}</td>
-                                            <td>{{$room->nama}} {!!$kurang!!}</td>
-                                            <td>{{$periode}} {!! $message !!}</td>
-                                            <td>{{$room->lama_sewa.' '.$room->jangka_sewa}} </td>
-                                            <td>{{$room->notes }}</td>
-                                            <td class="hidden">{{$status}}</td>
-                                            <td class="hidden">{{$order}}</td>
-                                            <td class="text-right">
-                                                @can('Edit Kamar')
-                                                <a href="#" data-id="{{$room->id}}" class="btn btn-xs btn-outline-primary edit_kamar">
-                                                    <i data-feather="edit" class="align-self-center icon-xs"></i>
-                                                </a>
-                                                @endcan
-                                                @can('Hapus Kamar')
-                                                <a href="{{route('rooms.delete',$room->id)}}" onclick="deletes(event)" class="btn btn-xs btn-outline-danger">
-                                                    <i data-feather="trash" class="align-self-center icon-xs"></i>
-                                                </a>
-                                                @endcan
-                                            </td>
+                                            <td class="text-center">{{ $data->tanggal }}</td>
+                                            <td>{{$data->trans_id}}</td>
+                                            <td>{{$data->room->room_name}}</td>
+                                            <td>{{$data->renter->nama}}</td>
+                                            <td>{{$data->lama_sewa.' '.$data->jangka_sewa}}</td>
+                                            <td>{{$data->tgl_mulai.' s/d '.$data->tgl_selesai}}</td>
+                                            <td class="text-right">{{$data->harga}} </td>
                                         </tr>
                                         <?php $no++; ?>
                                         @endforeach
@@ -138,91 +157,6 @@ $rooms = $data;
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="md_filter" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
-    <div class="modal-dialog " role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-dark">
-                <h6 class="modal-title m-0 text-white" id="exampleModalDefaultLabel">Tambah Kamar</h6>
-                <button type="button" class="close " data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true"><i class="la la-times"></i></span>
-                </button>
-            </div>
-            <form action="{{route('rooms.store')}}" method="POST">
-                @csrf
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12">
-                            <label class="">No/Nama Kamar</label>
-                            <input type="text" name="no_kamar" required class="form-control">
-                        </div>
-                        <div class="col-md-6 col-sm-12">
-                            <label class="">Tipe Kamar</label>
-                            <select class="mb-3 form-control select2 " name="kategori" required style="width: 100%" data-placeholder="Pilih Kategori">
-                                <option value=""></option>
-                                <?php foreach ($categories as $category) { ?>
-                                    <option value="{{$category->id_category}}">{{$category->category_name}}</option>
-                                <?php
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="col-md-12 col-sm-12">
-                            <label class="">Catatan</label>
-                            <input type="text" name="catatan" class="form-control">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="md_edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
-    <div class="modal-dialog " role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-dark">
-                <h6 class="modal-title m-0 text-white" id="exampleModalDefaultLabel">Edit Kamar</h6>
-                <button type="button" class="close " data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true"><i class="la la-times"></i></span>
-                </button>
-            </div>
-            <form action="{{route('rooms.update')}}" method="POST">
-                @csrf
-                <div class="modal-body">
-                    <div class="row">
-                        <input type="hidden" name="id" id="id_kamar">
-                        <div class="col-md-6 col-sm-12">
-                            <label class="">No/Nama Kamar</label>
-                            <input type="text" name="no_kamar" id="no_kamar" required class="form-control">
-                        </div>
-                        <div class="col-md-6 col-sm-12">
-                            <label class="">Tipe Kamar</label>
-                            <select class="mb-3 form-control select2 " id="kategori" name="kategori" required style="width: 100%" data-placeholder="Pilih Kategori">
-                                <option value=""></option>
-                                <?php foreach ($categories as $category) { ?>
-                                    <option value="{{$category->id_category}}">{{$category->category_name}}</option>
-                                <?php
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="col-md-12 col-sm-12">
-                            <label class="">Catatan</label>
-                            <input type="text" name="catatan" id="notes" class="form-control">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>
@@ -252,7 +186,7 @@ $rooms = $data;
                             <label class="">No/Nama Kamar</label>
                             <select class="mb-3 select2" id="kamar" name="kamar" required style="width: 100%" data-placeholder="Pilih Kamar">
                                 <option value=""></option>
-                                @foreach($base_room as $room)
+                                @foreach($rooms as $room)
                                 <option value="{{$room->id}}" data-room_category="{{$room->room_category}}">{{$room->room_name.' '.$room->category_name}}</option>
                                 @endforeach
                             </select>
@@ -298,33 +232,39 @@ $rooms = $data;
 @endsection
 @section('pagescript')
 <script>
+    var t = moment('<?= $start ?>', 'YYYY-MM-DD'),
+        a = moment('<?= $end ?>', 'YYYY-MM-DD');
     $(document).ready(function() {
         var table_bb = $("#tb_kamar").DataTable({
             order: [
-                [8, 'asc']
+                [1, 'DESC']
             ],
-            "paging": false,
-            "info": false,
+            // "paging": false,
+            // "info": false,
             "language": {
                 "emptyTable": "Tidak ada data untuk ditampilkan, silakan gunakan filter",
             },
+            columnDefs: [{
+                targets: 7,
+                render: $.fn.dataTable.render.number(',', '.', 2, 'Rp ')
+            }],
             rowGroup: {
                 dataSrc: [
                     function(row) {
-                        return '<i class="fas fa-chevron-down"></i> ' + row[7];
+                        return '<i class="fas fa-chevron-down"></i> ' + row[3];
                     }
                 ],
                 endRender: function(rows, group) {
-                    var numGroups = Math.ceil(rows.count()); //Math.round(rows.count() / 3) + 1;
+                    // var numGroups = Math.ceil(rows.count()); //Math.round(rows.count() / 3) + 1;
                     // return group + ' (' + numGroups + ' groups max of 3)';
-                    // var avg =
-                    //     rows
-                    //     .data()
-                    //     .pluck(7)
-                    //     .reduce((a, b) => a + b.replace(/[(Rp ,)]|(&nbsp;|<([^>]+)>)/g, '') * 1, 0);
+                    var avg =
+                        rows
+                        .data()
+                        .pluck(7)
+                        .reduce((a, b) => a + b.replace(/[(Rp ,)]|(&nbsp;|<([^>]+)>)/g, '') * 1, 0);
 
                     return (
-                        'Total <span class="highlight text-dark">' + $.number(numGroups, 0) + ' Kamar</span>'
+                        'Total <span class="highlight text-dark">' + $.number(avg, 2) + '</span>'
                     );
                 }
             }
@@ -346,7 +286,7 @@ $rooms = $data;
                         if (column == 0) {
                             return data;
                         } else {
-                            return column >= 6 && column <= 7 ?
+                            return column == 7 ?
                                 data.replace(/[(Rp ,)]|(&nbsp;|<([^>]+)>)/g, '') :
                                 data.replace(/(&nbsp;|<([^>]+)>)/ig, "");
                         }
@@ -359,10 +299,10 @@ $rooms = $data;
                 $.extend(true, {}, buttonCommon, {
                     extend: 'excelHtml5',
                     filename: function() {
-                        return "Laporan Kamar " + moment().format('YYYY-MM-DD');
+                        return "Transaksi Sewa " + moment().format('YYYY-MM-DD');
                     },
                     title: function() {
-                        var data = "{{config('app.name')}} \n Laporan Kamar";
+                        var data = "{{config('app.name')}} \n Transaksi Sewa";
                         return data.replace(/<br>/g, String.fromCharCode(10));
                     },
                     messageTop: function() {
@@ -374,15 +314,15 @@ $rooms = $data;
                 $.extend(true, {}, buttonCommon, {
                     extend: 'pdfHtml5',
                     filename: function() {
-                        return "Laporan Kamar " + moment().format('YYYY-MM-DD');
+                        return "Transaksi Sewa " + moment().format('YYYY-MM-DD');
                     },
-                    title: "{{config('app.name')}} \n Laporan Kamar",
+                    title: "{{config('app.name')}} \n Transaksi Sewa",
                     messageTop: '#Tgl Cetak: ' + moment().format('YYYY-MM-DD, HH:mm') + ' [{{Auth::user()->name}}]',
                     pageSize: 'A4',
                 }),
                 $.extend(true, {}, buttonCommon, {
                     extend: 'print',
-                    title: '<span class="text-center"><h3 class="m-0 p-0">Belova</h3><h4 class="m-0 p-0">Laporan Kamar</h4></span>',
+                    title: '<span class="text-center"><h3 class="m-0 p-0">Belova </h3><h4 class="m-0 p-0">Transaksi Sewa</h4></span>',
                     messageTop: '<b>#Tgl Cetak: ' + moment().format('YYYY-MM-DD, HH:mm') + ' [{{Auth::user()->name}}]</b><hr>',
                     pageSize: 'A4',
                 })
@@ -410,47 +350,36 @@ $rooms = $data;
             }
         });
     });
-    $('.edit_kamar').on('click', function() {
-        var id = $(this).data('id');
-        $.ajax({
-            url: "{{route('rooms.edit', ':id')}}",
-            type: "GET",
-            data: {
-                id: id
-            },
-            success: function(data) {
-                console.log(data);
-                $('#id_kamar').val(data.id);
-                $('#no_kamar').val(data.room_name);
-                $('#notes').val(data.notes);
-                $('#kategori').val(data.room_category).trigger('change');
-                $('#md_edit').modal('show');
-            }
-        });
-    });
+    $("#filter_faktur").daterangepicker({
+        // minDate: periode,
+        locale: {
+            format: "YYYY-MM-DD",
+            "separator": " s/d ",
+            "customRangeLabel": "<i class='fas fa-filter'></i> Custom range",
+            "firstDay": 1
+        },
+        autoApply: true,
+        startDate: t,
+        endDate: a,
+        ranges: {
+            "Minggu Lalu": [moment().subtract(1, 'weeks').startOf('week'), moment().subtract(1, 'weeks').endOf('week')],
+            "Minggu ini": [moment().startOf('week'), moment().endOf('week')],
+            "Bulan ini": [moment().startOf("month"), moment().endOf("month")],
+            "Bulan lalu": [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")],
+            "Tahun ini": [moment().startOf('year'), moment().endOf("year")]
+        }
+    }, e), e(t, a, "");
 
-    function deletes(e) {
-        e.preventDefault();
-        var url = e.currentTarget.getAttribute('href');
-        $.confirm({
-            title: 'Hapus data ini?',
-            content: 'Aksi ini tidak dapat diurungkan',
-            buttons: {
-                confirm: {
-                    text: 'Ya',
-                    btnClass: 'btn-red',
-                    keys: ['enter'],
-                    action: function() {
-                        window.location.href = url;
-                    },
-                },
-                cancel: {
-                    text: 'Batal',
-                    action: function() {}
-                }
-            }
-        });
-    };
+    function e(t, a, e) {
+        $("#filter").val(t.format("YYYY-MM-DD") + "s/d" + a.format("YYYY-MM-DD")).trigger('change');
+        var n = "",
+            s = "";
+        a - t < 100 || "Hari ini" == e ? (n = "Hari ini:", s = t.format("YYYY-MM-DD")) : "Kemarin" == e ? (n = "Kemarin:", s = t.format("YYYY-MM-DD")) : s = t.format("YYYY-MM-DD") + " s/d " + a.format("YYYY-MM-DD"), $("#Select_date").html(s), $("#Day_Name").html(n)
+    }
+    $('#filter').on('change', function() {
+        console.log($(this).val());
+        $('#f_filter_tgl').submit();
+    });
     $('#kamar').on('select2:select', function() {
         var id = $(this).find(':selected').data('room_category');
         $.ajax({

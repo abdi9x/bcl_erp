@@ -14,4 +14,8 @@ class renter_document extends Model
         'img'
     ];
     protected $table = 'renter_document';
+    public function renter()
+    {
+        return $this->belongsTo(renter::class, 'id_renter');
+    }
 }
