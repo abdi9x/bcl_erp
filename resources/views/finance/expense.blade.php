@@ -18,7 +18,7 @@ $data = $data;
                 </div><!--end col-->
                 <div class="col-auto align-self-center">
                     @can('Pengeluaran')
-                    <a href="#addBiaya" data-toggle="modal" data-target="#md_add_biaya" class="btn btn-primary btn-sm btn-square btn-outline-dashed waves-effect waves-light">
+                    <a href="#addBiaya" data-toggle="modal" data-target="#md_add_biaya" class="btn btn-danger btn-sm btn-square btn-outline-dashed waves-effect waves-light">
                         <i data-feather="plus" class="align-self-center icon-xs"></i> Input Pengeluaran
                     </a>
                     @endcan
@@ -114,7 +114,7 @@ $data = $data;
 <div class="modal fade" id="md_add_biaya" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
     <div class="modal-dialog  modal-xl" role="document">
         <div class="modal-content">
-            <div class="modal-header bg-primary">
+            <div class="modal-header bg-danger">
                 <h6 class="modal-title m-0 text-white" id="exampleModalDefaultLabel">Tambah Biaya (Expense)</h6>
                 <button type="button" class="close " data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true"><i class="la la-times text-white"></i></span>
@@ -212,7 +212,7 @@ $data = $data;
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Simpan</button>
                 </div>
             </form>
         </div>
