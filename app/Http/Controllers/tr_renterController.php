@@ -27,8 +27,7 @@ class tr_renterController extends Controller
         }
         $data = tr_renter::with('renter')->with('room')->whereBetween('tanggal', [$start, $end])->get();
         $category = DB::table('room_category')->get();
-        $rooms = Rooms::leftjoin('room_category', 'rooms.room_category', '=', 'room_category.id_category')
-            ->select('rooms.*', 'room_category.category_name as category_name')->get();
+        $rooms = Rooms::with('category')->get();
         $renter = renter::all();
         $belum_lunas = Fin_jurnal::leftjoin('tr_renter', 'tr_renter.trans_id', '=', 'fin_jurnal.doc_id')
             ->leftjoin('renter', 'renter.id', '=', 'tr_renter.id_renter')
@@ -67,9 +66,12 @@ class tr_renterController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(tr_renter $tr_renter)
+    public function show(tr_renter $tr_renter, Request $request)
     {
-        //
+        $transaksi = tr_renter::with('renter')->with('room')
+            ->with('jurnal')
+            ->where('trans_id', '=', $request->id)->first();
+        return response()->json($transaksi);
     }
 
     /**

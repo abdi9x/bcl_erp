@@ -18,7 +18,7 @@ $rooms = $data;
                     <span>{{config('app.name')}}</span>
                 </div><!--end col-->
                 <div class="col-auto align-self-center">
-                    
+
                     <button class="btn btn-sm btn-danger waves-effect waves-light" data-toggle="modal" data-target="#md_filter" id="bt_filter">
                         <i class="mdi mdi-plus"></i> Tambah Kamar
                     </button>
@@ -226,75 +226,7 @@ $rooms = $data;
         </div>
     </div>
 </div>
-<div class="modal fade" id="md_sewa" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-dark">
-                <h6 class="modal-title m-0 text-white" id="exampleModalDefaultLabel">Sewa Kamar</h6>
-                <button type="button" class="close " data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true"><i class="la la-times"></i></span>
-                </button>
-            </div>
-            <form action="{{route('rooms.sewa')}}" method="POST">
-                @csrf
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4 col-sm-12">
-                            <label class="">Penyewa</label>
-                            <select class="mb-3 select2" name="renter" required style="width: 100%" data-placeholder="Pilih Penyewa">
-                                <option value=""></option>
-                                @foreach($renter as $rent)
-                                <option value="{{$rent->id}}">{{$rent->nama}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4 col-sm-12">
-                            <label class="">No/Nama Kamar</label>
-                            <select class="mb-3 select2" id="kamar" name="kamar" required style="width: 100%" data-placeholder="Pilih Kamar">
-                                <option value=""></option>
-                                @foreach($base_room as $room)
-                                <option value="{{$room->id}}" data-room_category="{{$room->room_category}}">{{$room->room_name.' '.$room->category_name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4 col-sm-12">
-                            <label class="">Durasi Sewa</label>
-                            <select class="mb-3 select2" id="pricelist" name="pricelist" required style="width: 100%" data-placeholder="Pilih Durasi">
-                                <option value=""></option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-md-4 col-sm-12">
-                            <label class="">Tanggal Rencana Masuk</label>
-                            <input type="text" id="tgl_masuk" required name="tgl_masuk" class="form-control datePicker">
-                        </div>
-                        <div class="col-md-8 col-sm-12">
-                            <label class="">Catatan</label>
-                            <input type="text" id="catatan" name="catatan" class="form-control">
-                        </div>
-                    </div>
-                    <hr class="hr-dashed">
-                    <div class="row mt-3">
-                        <div class="col-md-4 col-sm-12">
-                            <label class="">Tanggal Terima Pembayaran</label>
-                            <input type="text" id="tgl_bayar" required name="tgl_bayar" class="form-control datePicker">
-                        </div>
-                        <div class="col-md-4 col-sm-12">
-                            <label class="">Nominal</label>
-                            <input type="text" id="nominal" required name="nominal" class="form-control inputmask">
-                            <small class="form-text text-muted">*Jika Pembayaran kurang dari harga, maka akan dianggap sebagai DP</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+
 @endsection
 @section('pagescript')
 <script>

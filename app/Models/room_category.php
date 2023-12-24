@@ -10,4 +10,9 @@ class room_category extends Model
     use HasFactory;
     protected $table = 'room_category';
     protected $guarded = ['id_category'];
+    protected $primaryKey = 'id_category';
+    public function rooms()
+    {
+        return $this->hasMany(Rooms::class, 'id_category');
+    }
 }

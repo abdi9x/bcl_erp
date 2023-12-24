@@ -24,4 +24,8 @@ class tr_renter extends Model
     {
         return $this->belongsTo(Rooms::class, 'room_id');
     }
+    public function jurnal()
+    {
+        return $this->hasMany(fin_jurnal::class, 'doc_id', 'trans_id')->where('kode_akun', '4-10101');
+    }
 }

@@ -44,9 +44,11 @@ class RoomsController extends Controller
             ->get();
         // return dd($data);
         $category = DB::table('room_category')->get();
-        $rooms = Rooms::leftjoin('room_category', 'rooms.room_category', '=', 'room_category.id_category')
-            ->select('rooms.*', 'room_category.category_name as category_name')->get();
+        // $rooms = Rooms::leftjoin('room_category', 'rooms.room_category', '=', 'room_category.id_category')
+        //     ->select('rooms.*', 'room_category.category_name as category_name')->get();
+        $rooms = Rooms::with('category')->get();
         $renter = renter::all();
+        // return response()->json($rooms);
         return view('rooms.rooms')->with('data', $data)->with('category', $category)->with('renter', $renter)->with('base_room', $rooms);
     }
 

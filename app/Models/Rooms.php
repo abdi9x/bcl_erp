@@ -21,4 +21,9 @@ class Rooms extends Model
     // ];
     protected $table = 'rooms';
     protected $primaryKey = 'id';
+
+    public function category()
+    {
+        return $this->belongsTo(room_category::class, 'room_category');
+    }
 }

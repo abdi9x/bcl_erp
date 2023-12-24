@@ -137,7 +137,7 @@ $data = $data;
                                         <tr>
                                             <td class="text-center">{{ $no }}</td>
                                             <td class="text-center">{{ $data->tanggal }}</td>
-                                            <td>{{$data->trans_id}}</td>
+                                            <td><u><a href="javascript:void(0)" data-id="{{$data->trans_id}}" class="dt_transaksi">{{$data->trans_id}}</a></u></td>
                                             <td>{{$data->room->room_name}}</td>
                                             <td>{{$data->renter->nama}}</td>
                                             <td>{{$data->lama_sewa.' '.$data->jangka_sewa}}</td>
@@ -187,7 +187,7 @@ $data = $data;
                             <select class="mb-3 select2" id="kamar" name="kamar" required style="width: 100%" data-placeholder="Pilih Kamar">
                                 <option value=""></option>
                                 @foreach($rooms as $room)
-                                <option value="{{$room->id}}" data-room_category="{{$room->room_category}}">{{$room->room_name.' '.$room->category_name}}</option>
+                                <option value="{{$room->id}}" data-room_category="{{$room->category->id_category}}">{{$room->room_name.' '.$room->category->category_name}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -408,6 +408,15 @@ $data = $data;
             'removeMaskOnSubmit': true,
             alias: 'decimal',
             groupSeparator: ',',
+        });
+    });
+    $('.dt_transaksi').on('click', function() {
+        var id = $(this).data('id');
+        var address = "{{route('transaksi.show', ':id')}}";
+        $.get(address, {
+            'id': id
+        }, function(data) {
+            console.log(data);
         });
     });
 </script>
