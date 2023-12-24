@@ -31,7 +31,7 @@
         <hr class="hr-dashed hr-menu">
         <li class="menu-label my-2">Inventaris</li>
         <li>
-            <a href="javascript: void(0);"><i data-feather="feather" class="align-self-center menu-icon"></i><span>Inventaris</span><span class="menu-arrow"><i class="mdi mdi-chevron-right"></i></span></a>
+            <a href="javascript: void(0);"><i data-feather="monitor" class="align-self-center menu-icon"></i><span>Inventaris</span><span class="menu-arrow"><i class="mdi mdi-chevron-right"></i></span></a>
             <ul class="nav-second-level" aria-expanded="false">
                 <li class="nav-item"><a class="nav-link" href="{{route('inventories.index')}}"><i class="ti-control-record"></i>Daftar Inventaris</a></li>
             </ul>
@@ -41,7 +41,7 @@
         <hr class="hr-dashed hr-menu">
         <li class="menu-label my-2">Keuangan</li>
         <li>
-            <a href="javascript: void(0);"><i data-feather="feather" class="align-self-center menu-icon"></i><span>Keuangan</span><span class="menu-arrow"><i class="mdi mdi-chevron-right"></i></span></a>
+            <a href="javascript: void(0);"><i data-feather="book" class="align-self-center menu-icon"></i><span>Keuangan</span><span class="menu-arrow"><i class="mdi mdi-chevron-right"></i></span></a>
             <ul class="nav-second-level" aria-expanded="false">
                 <li class="nav-item"><a class="nav-link" href="{{route('income.index')}}"><i class="ti-control-record"></i>Pemasukan</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{route('expense.index')}}"><i class="ti-control-record"></i>Pengeluaran</a></li>
