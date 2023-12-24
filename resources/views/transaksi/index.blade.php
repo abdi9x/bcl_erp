@@ -229,6 +229,71 @@ $data = $data;
         </div>
     </div>
 </div>
+<div class="modal fade" id="md_dt_trans" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h6 class="modal-title m-0 text-white" id="exampleModalDefaultLabel">Informasi Transaksi</h6>
+                <button type="button" class="close " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="la la-times text-white"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3 class="text-info mt-0" id="no_trans"></h3>
+                    </div>
+                    <div class="col-sm-6 text-right">
+                        <h3 class="text-info mt-0"><span class="text-success" id="paid_status">PAID</span></h3>
+                    </div>
+                </div>
+                <hr class=" mt-0">
+                <div class="row">
+                    <dt class="col-sm-2">Tanggal tr. Sewa</dt>
+                    <dd class="col-sm-10" id="tgl_transaksi"></dd>
+                    <dt class="col-sm-2">Oleh</dt>
+                    <dd class="col-sm-10" id="user_id"></dd>
+                </div>
+                <hr class="hr-dashed mt-2">
+                <div class="row">
+                    <table class="table table-sm" id="tb_tr">
+                        <thead class="bg-soft-primary">
+                            <tr>
+                                <th>Tanggal Tr.</th>
+                                <th>Catatan</th>
+                                <th class="text-right">Jumlah</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr class="hr-dashed mt-0">
+                <div class="row">
+                    <div class="col-sm-6">
+                    </div>
+                    <div class="col-sm-3 text-right">
+                        <h5 class="font-weight-bold">Total</h5>
+                    </div>
+                    <div class="col-sm-3 text-right">
+                        <h5 class="amm_total" id="total_exp"></h5>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-sm-12 text-right">
+                        <small class="text-muted"></small>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 @section('pagescript')
 <script>
@@ -416,7 +481,24 @@ $data = $data;
         $.get(address, {
             'id': id
         }, function(data) {
-            console.log(data);
+            // console.log(data);
+            $('#md_dt_trans').modal();
+            $('#tgl_transaksi').text(data.tanggal);
+            // generate script for place ajax data to my modal
+            $('#no_trans').text(data.trans_id);
+            $('#tb_tr tbody').empty();
+            var total = 0;
+            $.each(data.jurnal, function(index, value) {
+                $('#tb_tr tbody').append('<tr><td>' + value.tanggal + '</td><td>' + value.catatan + '</td><td class="text-right">Rp ' + $.number(value.kredit, 2) + '</td></tr>');
+                total += parseInt(value.kredit);
+                $('#user_id').text(value.name);
+            });
+            $('#total_exp').text('Rp ' + $.number(total, 2));
+            if (data.harga < total) {
+                $('#paid_status').removeClass('text-success').addClass('text-danger').text('BELUM LUNAS');
+            } else {
+                $('#paid_status').removeClass('text-danger').addClass('text-success').text('LUNAS');
+            }
         });
     });
 </script>

@@ -12,8 +12,12 @@ class Fin_jurnal extends Model
     protected $table = 'fin_jurnal';
     protected $primaryKey = 'id';
 
-    // public function renter_jurnal()
-    // {
-    //     return $this->belongsTo(tr_renter::class, 'doc_id');
-    // }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+    public function receipt()
+    {
+        return $this->hasMany(expense_receipt::class, 'trans_id', 'doc_id');
+    }
 }

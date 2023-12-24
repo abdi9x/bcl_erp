@@ -9285,3 +9285,8 @@ u {
     border-bottom: 2px dotted #bcc2ca;
     text-decoration: none;
 }
+
+.mfp-wrap,
+.mfp-bg {
+    z-index: 20000 !important;
+}

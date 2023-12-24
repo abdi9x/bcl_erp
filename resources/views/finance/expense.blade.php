@@ -120,7 +120,7 @@ $data = $data;
                     <span aria-hidden="true"><i class="la la-times text-white"></i></span>
                 </button>
             </div>
-            <form method="POST" action="{{route('expense.store')}}">
+            <form method="POST" action="{{route('expense.store')}}" enctype="multipart/form-data">
                 @csrf
 
                 <div class="modal-body" id="loading_content">
@@ -189,6 +189,7 @@ $data = $data;
                         </div>
                     </div>
                     <hr class="hr-dashed mt-0">
+
                     <div class="row">
                         <div class="col-sm-6">
 
@@ -204,6 +205,9 @@ $data = $data;
                         <div class="col-sm-3 text-right">
                             <h5 id="amm_total">Rp 0</h5>
                         </div>
+                    </div>
+                    <div class="row">
+                        <div id="fileUpload"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -265,13 +269,16 @@ $data = $data;
                         <h5 class="font-weight-bold">Total</h5>
                     </div>
                     <div class="col-sm-3 text-right">
-                        <h5 class="amm_total m-0 p-0" id="total_exp"></h5>
+                        <h5 class="amm_total" id="total_exp"></h5>
                     </div>
                 </div>
                 <div class="row mt-3">
                     <div class="col-sm-12 text-right">
                         <small class="text-muted"></small>
                     </div>
+                </div>
+                <div class="row" id="receipt">
+
                 </div>
 
             </div>
@@ -289,6 +296,10 @@ $data = $data;
     var t = moment('<?= $start ?>', 'YYYY-MM-DD'),
         a = moment('<?= $end ?>', 'YYYY-MM-DD');
     $(document).ready(function() {
+        $(document).ready(function() {
+            $("#fileUpload").fileUpload();
+        });
+
         var table_bb = $("#tb_expense").DataTable({
             order: [
                 [4, 'DESC'],
@@ -509,7 +520,10 @@ $data = $data;
                 id: id
             },
             function(data) {
+                console.log(data);
+                $('#receipt').empty();
                 $('#md_dt_biaya').find('tbody').empty();
+                var receipt = null;
                 var total = 0;
                 $.each(data, function(index, value) {
                     var manfaat = '';
@@ -518,14 +532,31 @@ $data = $data;
                             manfaat += '<span class="badge badge-dark">' + val.name + '</span> ';
                         }
                     });
+                    if (value.receipt != null) {
+                        receipt = value.receipt;
+                    }
                     $('#no_exp').text(value.doc_id);
                     $('#tgl_jurnal').text(value.tanggal);
-                    $('#user_id').text(value.nama_user);
-                    $('#md_dt_biaya').find('tbody').append('<tr><td>' + value.tipe_pengeluaran + '</td><td>' + manfaat + '</td><td>' + value.catatan + '</td><td class="text-right">' + $.number(value.debet, 2) + '</td></tr>');
+                    $('#user_id').text(value.user.name);
+                    $('#md_dt_biaya').find('tbody').append('<tr><td>' + value.tipe_pengeluaran + '</td><td>' + manfaat + '</td><td>' + value.catatan + '</td><td class="text-right">Rp ' + $.number(value.debet, 2) + '</td></tr>');
                     total += parseFloat(value.debet);
                 });
+                if (receipt != null) {
+                    $.each(receipt, function(index, val) {
+                        var path = "{{asset('assets/images/receipt/')}}";
+                        $('#receipt').append('<a href="' + path + '/' + val.img + '" class="image-popup-vertical-fit mr-2" title="' + val.trans_id + '"><img class="img-thumbnail" width="150" src="' + path + '/' + val.img + '"></a>');
+                    });
+                }
                 $('#total_exp').text('Rp ' + $.number(total, 2));
                 $('#md_dt_biaya').modal();
+                $(".image-popup-vertical-fit").magnificPopup({
+                    type: "image",
+                    closeOnContentClick: !0,
+                    mainClass: "mfp-img-mobile",
+                    image: {
+                        verticalFit: !0
+                    }
+                })
             });
     })
 </script>

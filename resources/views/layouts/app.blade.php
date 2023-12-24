@@ -34,7 +34,7 @@
     <link href="{{ URL::asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome-animation@1.1.1/css/font-awesome-animation.min.css"> -->
     <link href="{{ URL::asset('plugins/font-awesome-animation/font-awesome-animation.css') }}" rel="stylesheet" type="text/css">
-
+    <link rel="stylesheet" href="{{ URL::asset('plugins/custom-drag-drop-file-upload/fileUpload/fileUpload.css') }}">
 </head>
 
 <body class="dark-sidenav">
@@ -99,7 +99,7 @@
     <script src="{{ URL::asset('assets/js/jquery.number.js') }}"></script>
     <script src="{{ URL::asset('plugins/lightbox/jquery.magnific-popup.js') }}"></script>
     <script src="{{ URL::asset('assets/pages/jquery.lightbox.init.js') }}"></script>
-
+    <script src="{{ URL::asset('plugins/custom-drag-drop-file-upload/fileUpload/fileUpload.js') }}"></script>
 
     <!-- App js -->
     <script src="{{ URL::asset('assets/js/core.js') }}"></script>

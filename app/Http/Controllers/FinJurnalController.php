@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\expense_receipt;
 use App\Models\Fin_jurnal;
 use App\Models\Inventory;
 use App\Models\renter;
 use App\Models\tr_renter;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Intervention\Image\Facades\Image as Image;
 
 class FinJurnalController extends Controller
 {
@@ -139,7 +142,9 @@ class FinJurnalController extends Controller
      */
     public function expense_show(Fin_jurnal $fin_jurnal, Request $request)
     {
-        $data = Fin_jurnal::leftjoin('users', 'users.id', '=', 'fin_jurnal.user_id')->select('fin_jurnal.*','users.name as nama_user')->where('doc_id', $request->id)->where('kode_akun', 'regexp', '5-10101|5-10102')->where('pos', 'D')->get();
+        $data = Fin_jurnal::with('user')->with('receipt')
+            ->where('doc_id', $request->id)->where('kode_akun', 'regexp', '5-10101|5-10102')
+            ->where('pos', 'D')->get();
         foreach ($data as $value) {
             switch ($value->kode_akun) {
                 case '5-10101': {
@@ -226,10 +231,17 @@ class FinJurnalController extends Controller
         // return response()->json($data);
         return view('finance.expense')->with('data', $data)->with('start', $start)->with('end', $end)->with('inventory', $inventory);
     }
-
+    function generateRandomString($length = 20)
+    {
+        return substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyz', ceil($length / strlen($x)))), 1, $length) . time();
+    }
     public function store_expense(Request $request)
     {
+        $width = 600;
+        $height = 600;
+
         // return response()->json($request);
+        // dd($data);
         DB::beginTransaction();
         try {
             $no_exp = $this->get_no_exp();
@@ -275,6 +287,24 @@ class FinJurnalController extends Controller
                     'user_id' => auth()->user()->id,
                     'csrf' => time()
                 ]);
+            }
+            if (isset($request->receipt)) {
+                foreach ($request->receipt as $key => $value) {
+                    $image = $request->file('receipt')[$key];
+                    $filename = 'bclReceipt_' . Carbon::now()->format('Y-m-d') . '_' . $this->generateRandomString(8) . '.' . $image->getClientOriginalExtension();
+                    $path = public_path('assets/images/receipt/' . $filename);
+                    $img = Image::make($request->file('receipt')[$key]);
+                    $img->height() > $height ? $height = $height : $height =  $img->height();
+                    $img->width() > $width ? $width = $width : $width =  $img->width();
+                    $img->resize($width, $height, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    $img->save($path);
+                    expense_receipt::create([
+                        'trans_id' => $no_exp,
+                        'img' => $filename
+                    ]);
+                }
             }
             DB::commit();
             return back()->with('success', 'Pengeluaran Berhasil Dibuat');

@@ -69,7 +69,10 @@ class tr_renterController extends Controller
     public function show(tr_renter $tr_renter, Request $request)
     {
         $transaksi = tr_renter::with('renter')->with('room')
-            ->with('jurnal')
+            ->with('jurnal', function ($query) {
+                $query->leftjoin('users', 'users.id', '=', 'fin_jurnal.user_id');
+                $query->orderby('fin_jurnal.tanggal', 'ASC');
+            })
             ->where('trans_id', '=', $request->id)->first();
         return response()->json($transaksi);
     }
