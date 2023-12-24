@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{config('app.name')}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta content="{{config('app.tagline')}}" name="description" />
     <meta content="" name="author" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
@@ -32,7 +32,7 @@
     <link href="{{ URL::asset('plugins/animate/animate.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ URL::asset('plugins/lightbox/magnific-popup.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ URL::asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome-animation@1.1.1/css/font-awesome-animation.min.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome-animation@1.1.1/css/font-awesome-animation.min.css"> -->
     <link href="{{ URL::asset('plugins/font-awesome-animation/font-awesome-animation.css') }}" rel="stylesheet" type="text/css">
 
 </head>
