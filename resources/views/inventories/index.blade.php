@@ -116,7 +116,7 @@ $inv = $data;
                                                     <i data-feather="edit" class="align-self-center icon-xs"></i>
                                                 </a>
                                                 @endcan
-                                                @can('Hapus  Inventaris')
+                                                @can('Hapus Inventaris')
                                                 <a href="{{route('inventories.delete',$data->id)}}" onclick="deletes(event)" class="btn btn-xs btn-danger">
                                                     <i data-feather="trash" class="align-self-center icon-xs"></i>
                                                 </a>

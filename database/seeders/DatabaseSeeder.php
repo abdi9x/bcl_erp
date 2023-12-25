@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Hapus Penyewa', 'guard_name' => 'web'],
             ['name' => 'Tambah Inventaris', 'guard_name' => 'web'],
             ['name' => 'Edit Inventaris', 'guard_name' => 'web'],
-            ['name' => 'Hapus  Inventaris', 'guard_name' => 'web'],
+            ['name' => 'Hapus Inventaris', 'guard_name' => 'web'],
             ['name' => 'Perbaikan Inventaris', 'guard_name' => 'web'],
             ['name' => 'Edit Pricelist', 'guard_name' => 'web'],
             ['name' => 'Tambah Pricelist', 'guard_name' => 'web'],
