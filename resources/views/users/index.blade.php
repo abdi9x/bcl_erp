@@ -150,7 +150,7 @@
     <!--end modal-dialog-->
 </div>
 <div class="modal fade bd-example-modal-xl" id="md_edit" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form method="POST" action="{{route('users.update')}}">
                 @csrf
@@ -162,7 +162,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="col-md-12 col-lg-4">
+                    <div class="col-md-12 col-lg-12">
                         <div class="form-group">
                             <label for="name">Nama</label>
                             <input type="text" name="name" class="form-control" id="name" placeholder="name">
