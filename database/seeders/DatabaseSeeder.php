@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\room_category;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
@@ -25,6 +26,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'Abdi.p43@gmail.com',
             'phone' => '082226955911',
             'img' => 'default.jpg',
+            'password_changed_at' => Carbon::now()->format('Y-m-d H:i:s'),
             'password' => Hash::make('ratakgagas'),
         ]);
         $perms = [

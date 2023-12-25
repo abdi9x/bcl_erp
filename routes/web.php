@@ -37,7 +37,7 @@ Auth::routes();
 
 Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-
+    Route::post('/resetpassword', [UsersController::class, 'resetpassword'])->name('resetpassword');
     Route::group(['middleware' => ['role:Administrator|Keuangan|Admin Kamar']], function () {
         Route::any('/finance/income', [FinJurnalController::class, 'index'])->name('income.index');
         Route::any('/finance/expense', [FinJurnalController::class, 'expense'])->name('expense.index');

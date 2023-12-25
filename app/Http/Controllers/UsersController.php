@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Hash;
 
 class UsersController extends Controller
 {
@@ -79,6 +81,7 @@ class UsersController extends Controller
                     'phone' => $request->phone,
                     'email' => $request->email,
                     'password' => $request->password,
+                    'password_changed_at' => null,
                 ]);
                 return back()->with('success', 'Data User Berhasil Diubah!');
             } else {
@@ -91,6 +94,24 @@ class UsersController extends Controller
             }
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage())->with('input', $request->all());
+        }
+    }
+    public function resetpassword(Request $request)
+    {
+        try {
+            $this->validate($request, [
+                'password' => 'required',
+            ]);
+            $users = User::findorfail($request->user_id);
+            // return response()->json($users);
+            $users->update([
+                'password_changed_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'password' => Hash::make($request->password)
+            ]);
+            // return response()->json($users);
+            return redirect('/home')->with('success', 'Password Berhasil Diubah!');
+        } catch (\Exception $e) {
+            return redirect('/login')->with('error', $e->getMessage())->with('input', $request->all());
         }
     }
 }
