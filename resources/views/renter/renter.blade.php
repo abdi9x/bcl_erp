@@ -73,11 +73,19 @@ $pricelist = [];
                                         $no = 1;
                                         ?>
                                         @foreach($renter as $renter)
+                                        <?php
+                                        foreach ($renter->document as $doc) {
+                                            // $foto=null;
+                                            if ($doc->document_type == 'PHOTO') {
+                                                $foto = $doc->img;
+                                            }
+                                        }
+                                        ?>
                                         <tr>
                                             <td class="text-center">{{ $no }}</td>
                                             <td class="text-center">
-                                                <a href="{{ URL::asset('assets/images/renter/'.$renter->img)}}" class="image-popup-vertical-fit" title="{{$renter->nama}}">
-                                                    <img class="thumb-sm rounded" style="max-height: 38px;width:100%" src="{{ URL::asset('assets/images/renter/'.$renter->img)}}">
+                                                <a href="{{ URL::asset('assets/images/renter/'.$foto)}}" class="image-popup-vertical-fit" title="{{$renter->nama}}">
+                                                    <img class="thumb-sm rounded" width="50" src="{{ URL::asset('assets/images/renter/'.$foto)}}">
                                                 </a>
                                             </td>
                                             <td class="">{{ $renter->nama }}</td>

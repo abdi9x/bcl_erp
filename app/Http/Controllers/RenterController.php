@@ -15,14 +15,13 @@ class RenterController extends Controller
      */
     public function index()
     {
-        // $renter = renter::leftjoin('renter_document', 'renter.id', '=', 'renter_document.id_renter')
-        //     ->select('renter.*', 'renter_document.img')
+        // $renter = renter::leftjoin('renter_document', function ($join) {
+        //     $join->on('renter.id', '=', 'renter_document.id_renter')
+        //         ->where('renter_document.document_type', '=', 'PHOTO');
+        // })->select('renter.*', 'renter_document.img')
         //     ->get();
-        $renter = renter::leftjoin('renter_document', function ($join) {
-            $join->on('renter.id', '=', 'renter_document.id_renter')
-                ->where('renter_document.document_type', '=', 'PHOTO');
-        })->select('renter.*', 'renter_document.img')
-            ->get();
+        $renter = renter::with('document')->get();
+        // return response()->json($renter);
         return view('renter.renter')->with('renter', $renter);
     }
 

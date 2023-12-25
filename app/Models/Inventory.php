@@ -10,4 +10,10 @@ class Inventory extends Model
     use HasFactory;
     protected $guarded = ['id'];
     protected $table = 'inventories';
+
+    public function room()
+    {
+
+        return $this->belongsTo(Rooms::class, 'assigned_to', 'id');
+    }
 }

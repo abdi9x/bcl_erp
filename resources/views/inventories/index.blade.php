@@ -102,7 +102,7 @@ $inv = $data;
 
                                         <tr>
                                             <td class="text-center">{{ $no }}</td>
-                                            <td class="text-center">{{ $data->inv_number }}</td>
+                                            <td class="text-center"><u><a href="javascript:void(0)" class="view_inv" data-id="{{ $data->inv_number }}">{{ $data->inv_number }}</a></u></td>
                                             <td>{{$data->name}}</td>
                                             <td>{{$data->notes}}</td>
                                             <td>{{$data->type}}</td>
@@ -303,6 +303,58 @@ $inv = $data;
                     <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="md_history" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h6 class="modal-title m-0 text-white" id="exampleModalDefaultLabel">Riwayat Perbaikan</h6>
+                <button type="button" class="close " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="la la-times"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3 class="text-info mt-0">Riwayat Perbaikan</h3>
+                    </div>
+                    <div class="col-sm-6 text-right">
+                        <h3 class="text-info mt-0"><span class="text-success"></span></h3>
+                    </div>
+                </div>
+                <hr class=" mt-0">
+                <div class="row">
+                    <dt class="col-sm-2">No Inventory</dt>
+                    <dd class="col-sm-10" id="view_inv"></dd>
+                    <dt class="col-sm-2">Nama</dt>
+                    <dd class="col-sm-10" id="view_nama"></dd>
+                    <dt class="col-sm-2">Tipe</dt>
+                    <dd class="col-sm-10" id="view_tipe"></dd>
+                    <dt class="col-sm-2">No. Kamar</dt>
+                    <dd class="col-sm-10" id="view_no_kamar"></dd>
+                </div>
+                <hr class="hr-dashed mt-2">
+                <div class="row">
+                    <table class="table table-sm">
+                        <thead class="bg-soft-primary">
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Deskripsi</th>
+                                <th class="text-right">No Transaksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+                <hr class="hr-dashed mt-0">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tutup</button>
+            </div>
         </div>
     </div>
 </div>
@@ -583,6 +635,27 @@ $inv = $data;
                 }
             }, 'json');
         $('#md_edit_inv').modal('show');
+    });
+    $('.view_inv').on('click', function() {
+        var id = $(this).data('id');
+        var address = "{{route('inventories.show',':id')}}";
+        $.get(address, {
+            'id': id
+        }, function(data) {
+            $('#md_history tbody').html('');
+            console.log(data);
+            $('#view_inv').html(data.inv_number);
+            $('#view_nama').html(data.name);
+            $('#view_tipe').html(data.type);
+            if (data.room_name != null) {
+                $('#view_no_kamar').html(data.room_name);
+            }
+            $.each(data.history, function(index, value) {
+                var row = '<tr><td>' + value.tanggal + '</td><td>' + value.catatan + '</td><td class="text-right">' + value.doc_id + '</td></tr>';
+                $('#md_history tbody').append(row);
+            });
+            $('#md_history').modal('show');
+        });
     });
 </script>
 @stop

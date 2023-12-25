@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
 
     Route::group(['middleware' => ['role:Administrator|Admin Kamar|Keuangan']], function () {
         route::get('/inventories', [InventoriesController::class, 'index'])->name('inventories.index');
+        route::get('/inventories/show/{id}', [InventoriesController::class, 'show'])->name('inventories.show');
         Route::group(['middleware' => ['permission:Tambah Inventaris|Edit Inventaris|Hapus Inventaris']], function () {
             route::post('/inventories/store', [InventoriesController::class, 'store'])->name('inventories.store');
             route::get('/inventories/delete/{id}', [InventoriesController::class, 'destroy'])->name('inventories.delete');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Fin_jurnal;
 use App\Models\Inventory;
 use App\Models\Rooms;
 use Illuminate\Support\Facades\DB;
@@ -71,9 +72,19 @@ class InventoriesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Inventory $inventory)
+    public function show(Inventory $inventory, Request $request)
     {
-        //
+        try {
+            $data = Inventory::with('room')->where('inv_number', $request->id)->first();
+            $history = [];
+            foreach (Fin_jurnal::where('kode_subledger', 'like', '%' . $data->inv_number . '%')->orderby('tanggal', 'desc')->orderby('id', 'desc')->get() as $value) {
+                array_push($history, $value);
+            }
+            $data->history = $history;
+            return response()->json($data);
+        } catch (\Throwable $th) {
+            return response()->json($th->getMessage());
+        }
     }
 
     /**

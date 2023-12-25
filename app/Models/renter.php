@@ -20,12 +20,13 @@ class renter extends Model
     ];
     protected $table = 'renter';
     protected $primaryKey = 'id';
+
     public function tr_renter()
     {
         return $this->hasMany(tr_renter::class, 'id_renter');
     }
     public function document()
     {
-        return $this->hasMany(renter_document::class, 'id');
+        return $this->hasMany(renter_document::class, 'id_renter');
     }
 }

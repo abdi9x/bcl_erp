@@ -544,7 +544,7 @@ $data = $data;
                 if (receipt != null) {
                     $.each(receipt, function(index, val) {
                         var path = "{{asset('assets/images/receipt/')}}";
-                        $('#receipt').append('<a href="' + path + '/' + val.img + '" class="image-popup-vertical-fit mr-2" title="' + val.trans_id + '"><img class="img-thumbnail" width="150" src="' + path + '/' + val.img + '"></a>');
+                        $('#receipt').append('<a href="' + path + '/' + val.img + '" class="image-popup-vertical-fit mr-2 " title="' + val.trans_id + '"><img class="img-thumbnail hvr-glow" width="150" src="' + path + '/' + val.img + '"></a>');
                     });
                 }
                 $('#total_exp').text('Rp ' + $.number(total, 2));
