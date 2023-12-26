@@ -130,6 +130,7 @@ $data = $data;
                                             <th class="text-white">Tipe</th>
                                             <th class="text-white">Catatan</th>
                                             <th class="text-white text-right">Jumlah</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -144,6 +145,12 @@ $data = $data;
                                             <td>{{$data->identity}}</td>
                                             <td>{{$data->catatan}}</td>
                                             <td class="text-right">{{$data->debet}} </td>
+                                            <td class="text-right">
+                                                @role('Administrator')
+                                                <a class="btn btn-xs btn-square btn-danger" onclick="deletes(event)" href="{{route('income.delete',$data->no_jurnal)}}"><i class="fas fa-trash"></i></i></button>
+                                                    @endrole
+                                            </td>
+
                                         </tr>
                                         <?php $no++; ?>
                                         @endforeach
@@ -380,5 +387,28 @@ $data = $data;
         $('#transaksi').val(doc_id).trigger('select2:select');
         // init_component();
     }
+
+    function deletes(e) {
+        e.preventDefault();
+        var url = e.currentTarget.getAttribute('href');
+        $.confirm({
+            title: 'Hapus data ini?',
+            content: 'Aksi ini tidak dapat diurungkan',
+            buttons: {
+                confirm: {
+                    text: 'Ya',
+                    btnClass: 'btn-red',
+                    keys: ['enter'],
+                    action: function() {
+                        window.location.href = url;
+                    },
+                },
+                cancel: {
+                    text: 'Batal',
+                    action: function() {}
+                }
+            }
+        });
+    };
 </script>
 @stop

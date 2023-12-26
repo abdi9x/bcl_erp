@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+// use app\Models\Fin_jurnal;
 
 class tr_renter extends Model
 {
@@ -26,6 +27,6 @@ class tr_renter extends Model
     }
     public function jurnal()
     {
-        return $this->hasMany(fin_jurnal::class, 'doc_id', 'trans_id')->where('kode_akun', '4-10101');
+        return $this->hasMany(Fin_jurnal::class, 'doc_id', 'trans_id')->where('kode_akun', '4-10101');
     }
 }

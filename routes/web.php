@@ -40,8 +40,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/resetpassword', [UsersController::class, 'resetpassword'])->name('resetpassword');
     Route::group(['middleware' => ['role:Administrator|Keuangan|Admin Kamar']], function () {
         Route::any('/finance/income', [FinJurnalController::class, 'index'])->name('income.index');
+        Route::get('/finance/income/delete/{id}', [FinJurnalController::class, 'income_delete'])->name('income.delete');
         Route::any('/finance/expense', [FinJurnalController::class, 'expense'])->name('expense.index');
         Route::get('/finance/expense/view/{id}', [FinJurnalController::class, 'expense_show'])->name('expense.show');
+        Route::get('/finance/expense/delete/{id}', [FinJurnalController::class, 'expense_delete'])->name('expense.delete');
         Route::group(['middleware' => ['permission:Pemasukan']], function () {
             Route::post('/finance/income/store', [FinJurnalController::class, 'store'])->name('income.store');
         });

@@ -53,12 +53,12 @@ class FinJurnalController extends Controller
             ->where('kode_akun', '1-10101')->where('pos', 'D')
             ->orderby('tanggal', 'DESC')
             ->get();
-        // foreach ($data as $value) {
-        //     if ($value->kode_subledger != null) {
-        //         $inventory = Inventory::where('assigned_to', $value->kode_subledger)->get();
-        //     }
-        //     $value->inventories = $inventory;
-        // }
+        foreach ($data as $value) {
+            if ($value->kode_subledger != null) {
+                $inventory = Inventory::where('assigned_to', $value->kode_subledger)->get();
+                $value->inventories = $inventory;
+            }
+        }
 
         $belum_lunas = Fin_jurnal::leftjoin('tr_renter', 'tr_renter.trans_id', '=', 'fin_jurnal.doc_id')
             ->leftjoin('renter', 'renter.id', '=', 'tr_renter.id_renter')
@@ -67,15 +67,14 @@ class FinJurnalController extends Controller
                 'renter.nama',
                 'renter.id',
                 'tr_renter.harga',
-                DB::raw('sum( kredit ) AS dibayar'),
-                DB::raw('tr_renter.harga - sum( kredit ) AS kurang')
+                DB::raw('ifnull(sum( kredit ),0) AS dibayar'),
+                DB::raw('ifnull(tr_renter.harga - sum( kredit ),0) AS kurang')
             )->where('fin_jurnal.identity', 'regexp', 'pemasukan|sewa kamar')
-
             ->groupby('fin_jurnal.doc_id')
             ->havingRaw('(tr_renter.harga - sum(kredit)) > 0')
             ->orderby('fin_jurnal.tanggal', 'DESC')
             ->get();
-        // return dd($belum_lunas);
+
         return view('finance.income')->with('data', $data)->with('start', $start)->with('end', $end)->with('belum_lunas', $belum_lunas);
     }
 
@@ -168,6 +167,22 @@ class FinJurnalController extends Controller
         return response()->json($data);
     }
 
+    public function income_delete(Request $request, Fin_jurnal $fin_jurnal)
+    {
+        try {
+            $data = Fin_jurnal::where('no_jurnal', $request->id)->first();
+            $jurnals = Fin_jurnal::where('doc_id', $data->doc_id)->get();
+            if (count($jurnals) > 2) {
+                Fin_jurnal::where('no_jurnal', $request->id)->delete();
+                return back()->with('success', 'Pemasukan Berhasil Dihapus');
+            } else {
+                return back()->with('error', 'DP tidak dapat dihapus, Batalkan transksi sewa kamar untuk menghapus transaksi');
+            }
+        } catch (\Throwable $th) {
+            return back()->with('error', $th->getMessage());
+        }
+    }
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -208,6 +223,7 @@ class FinJurnalController extends Controller
             ->where('kode_akun', 'regexp', '5-10101|5-10102')->where('pos', 'D')
             ->orderby('tanggal', 'DESC')
             ->get();
+        // return response()->json($inventory);
         foreach ($data as $value) {
             switch ($value->kode_akun) {
                 case '5-10101': {
@@ -230,6 +246,24 @@ class FinJurnalController extends Controller
         }
         // return response()->json($data);
         return view('finance.expense')->with('data', $data)->with('start', $start)->with('end', $end)->with('inventory', $inventory);
+    }
+    public function expense_delete(Request $request)
+    {
+        try {
+            $delete = Fin_jurnal::where('doc_id', $request->id)->delete();
+            $receipt = expense_receipt::where('trans_id', $request->id)->get();
+            foreach ($receipt as $value) {
+                $path = public_path('assets/images/receipt/' . $value->img);
+                if (file_exists($path)) {
+                    unlink($path);
+                }
+                expense_receipt::find($value->id)->delete();
+            }
+            return back()->with('success', 'Pengeluaran Berhasil Dihapus');
+        } catch (\Throwable $th) {
+            return back()->with('error', $th->getMessage());
+        }
+        return response()->json($request->all());
     }
     function generateRandomString($length = 20)
     {

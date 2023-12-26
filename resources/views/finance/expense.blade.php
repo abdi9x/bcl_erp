@@ -73,6 +73,7 @@ $data = $data;
                                             <th class="text-white">Penerima Manfaat</th>
                                             <th class="text-white">Catatan</th>
                                             <th class="text-white text-right">Jumlah</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -94,6 +95,11 @@ $data = $data;
                                             </td>
                                             <td>{{$data->catatan}}</td>
                                             <td class="text-right">Rp {{number_format($data->debet,2)}} </td>
+                                            <td class="text-right">
+                                                @role('Administrator')
+                                                <a class="btn btn-xs btn-square btn-danger" onclick="deletes(event)" href="{{route('expense.delete',$data->doc_id)}}"><i class="fas fa-trash"></i></i></button>
+                                                    @endrole
+                                            </td>
                                         </tr>
                                         <?php $no++; ?>
                                         @endforeach
@@ -558,6 +564,29 @@ $data = $data;
                     }
                 })
             });
-    })
+    });
+
+    function deletes(e) {
+        e.preventDefault();
+        var url = e.currentTarget.getAttribute('href');
+        $.confirm({
+            title: 'Hapus data ini?',
+            content: 'Aksi ini tidak dapat diurungkan',
+            buttons: {
+                confirm: {
+                    text: 'Ya',
+                    btnClass: 'btn-red',
+                    keys: ['enter'],
+                    action: function() {
+                        window.location.href = url;
+                    },
+                },
+                cancel: {
+                    text: 'Batal',
+                    action: function() {}
+                }
+            }
+        });
+    };
 </script>
 @stop
