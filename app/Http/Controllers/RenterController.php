@@ -6,7 +6,7 @@ use App\Models\renter;
 use App\Models\renter_document;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rules\File;
+use Illuminate\Support\Facades\Storage;
 
 class RenterController extends Controller
 {
