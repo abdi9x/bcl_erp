@@ -11,6 +11,7 @@ class Room_Category_image extends Model
     protected $table = 'room_category_image';
     protected $fillable = [
         'room_category_id',
+        'tag',
         'image',
     ];
     public function category()
