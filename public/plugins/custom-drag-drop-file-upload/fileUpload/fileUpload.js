@@ -11,7 +11,7 @@
                 <label for="${fileUploadId}" class="file-upload">
                     <div>
                         <i class="mdi mdi-image-multiple"></i><br>
-                        <h5>Drag & Drop Receipt Here</h5>
+                        <h5>Drag & Drop image Here</h5>
                         <span>OR</span>
                         <div>Browse Files</div>
                     </div>

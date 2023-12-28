@@ -226,7 +226,6 @@ $rooms = $data;
         </div>
     </div>
 </div>
-
 @endsection
 @section('pagescript')
 <script>

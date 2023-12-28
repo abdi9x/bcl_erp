@@ -15,4 +15,9 @@ class room_category extends Model
     {
         return $this->hasMany(Rooms::class, 'id_category');
     }
+
+    public function images()
+    {
+        return $this->hasMany(Room_Category_image::class, 'room_category_id');
+    }
 }

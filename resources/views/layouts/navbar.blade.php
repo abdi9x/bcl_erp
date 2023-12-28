@@ -10,6 +10,7 @@
             <ul class="nav-second-level" aria-expanded="false">
                 <li class="nav-item"><a class="nav-link" href="{{route('rooms')}}"><i class="ti-control-record"></i>Daftar Kamar</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{route('pricelist.index')}}"><i class="ti-control-record"></i>Daftar Harga</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{route('category')}}"><i class="ti-control-record"></i>Daftar Kategori</a></li>
             </ul>
         </li>
         @endhasrole

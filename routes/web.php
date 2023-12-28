@@ -11,6 +11,8 @@ use App\Http\Controllers\FinJurnalController;
 use App\Http\Controllers\InventoriesController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\RoomCategoryController;
+use App\Http\Controllers\RoomCategoryImageController;
 use App\Http\Controllers\UsersController;
 
 /*
@@ -84,6 +86,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/rooms/edit/{id}', [RoomsController::class, 'edit'])->name('rooms.edit');
             Route::post('/rooms/update', [RoomsController::class, 'update'])->name('rooms.update');
             Route::get('/rooms/delete/{id}', [RoomsController::class, 'destroy'])->name('rooms.delete');
+
+            Route::get('/category', [RoomCategoryController::class, 'index'])->name('category');
+            Route::get('/category/edit/{id}', [RoomCategoryController::class, 'edit'])->name('category.edit');
+            Route::get('/category/delete/{id}', [RoomCategoryController::class, 'destroy'])->name('category.delete');
+            Route::post('/category/update', [RoomCategoryController::class, 'update'])->name('category.update');
+            Route::post('/category/store', [RoomCategoryController::class, 'store'])->name('category.store');
+            Route::post('/images/store', [RoomCategoryImageController::class, 'store'])->name('images.store');
+            Route::get('/images/delete/{id}', [RoomCategoryImageController::class, 'destroy'])->name('images.delete');
         });
         Route::post('/rooms/sewa', [tr_renterController::class, 'sewa'])->name('rooms.sewa');
         Route::get('/rooms', [RoomsController::class, 'index'])->name('rooms');
