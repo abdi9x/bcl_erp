@@ -61,10 +61,11 @@ $pricelist = [];
                                             <th class="text-center text-white">Foto</th>
                                             <th class="text-white">Nama</th>
                                             <th class="text-white">Alamat</th>
+                                            <th class="text-white">Tgl. Lahir</th>
                                             <th class="text-white">Phone</th>
                                             <th class="text-white">Kendaraan</th>
                                             <th class="text-white">Kamar</th>
-                                            <th class="text-white">Periode</th>
+                                            <th class="text-white">Habis Kontrak</th>
                                             <th class="text-right"></th>
                                         </tr>
                                     </thead>
@@ -90,18 +91,19 @@ $pricelist = [];
                                             </td>
                                             <td class="">{{ $renter->nama }}</td>
                                             <td>{{$renter->alamat}}</td>
+                                            <td>{{$renter->birthday}}</td>
                                             <td>{{$renter->phone}}</td>
                                             <td>{{$renter->kendaraan.' - '.$renter->nopol}}</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td class="text-right">
+                                            <td>{{$renter->current_room->room_name??''}}</td>
+                                            <td>{{$renter->current_room->tgl_selesai??''}}</td>
+                                            <td class="text-right text-nowrap">
                                                 @can('Edit Penyewa')
-                                                <a href="#" data-id="{{$renter->id}}" class="btn btn-xs btn-outline-primary edit">
+                                                <a href="#" data-id="{{$renter->id}}" class="btn btn-xs btn-warning edit">
                                                     <i data-feather="edit" class="align-self-center icon-xs"></i>
                                                 </a>
                                                 @endcan
                                                 @can('Hapus Penyewa')
-                                                <a href="{{route('renter.delete',$renter->id)}}" onclick="deletes(event)" class="btn btn-xs btn-outline-danger">
+                                                <a href="{{route('renter.delete',$renter->id)}}" onclick="deletes(event)" class="btn btn-xs btn-danger">
                                                     <i data-feather="trash" class="align-self-center icon-xs"></i>
                                                 </a>
                                                 @endcan
@@ -190,6 +192,12 @@ $pricelist = [];
                             <div class="form-group">
                                 <label for="nopol">No Polisi</label>
                                 <input type="text" class="form-control" name="nopol" required="" placeholder="...">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-12">
+                            <div class="form-group">
+                                <label for="birthday">Tgl. Lahir</label>
+                                <input type="text" class="form-control datePicker" name="birthday" required="">
                             </div>
                         </div>
                     </div>
@@ -288,6 +296,12 @@ $pricelist = [];
                             <div class="form-group">
                                 <label for="nopol">No Polisi</label>
                                 <input type="text" class="form-control" id="nopol" name="nopol" required="" placeholder="AD 8310 VA">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-12">
+                            <div class="form-group">
+                                <label for="birthday">Tgl. Lahir</label>
+                                <input type="text" class="form-control datePicker" id="birthday" name="birthday" required="">
                             </div>
                         </div>
                     </div>
@@ -421,6 +435,7 @@ $pricelist = [];
                 $('#alamat').val(bio.alamat);
                 $('#phone').val(bio.phone);
                 $('#phone2').val(bio.phone2);
+                $('#birthday').val(bio.birthday);
                 $('#identitas').val(bio.identitas).trigger('change');
                 $('#nomor_identitas').val(bio.no_identitas);
                 $('#kendaraan').val(bio.kendaraan);

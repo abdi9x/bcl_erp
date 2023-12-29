@@ -19,7 +19,7 @@ class RenterController extends Controller
         //         ->where('renter_document.document_type', '=', 'PHOTO');
         // })->select('renter.*', 'renter_document.img')
         //     ->get();
-        $renter = renter::with('document')->get();
+        $renter = renter::with('document')->with('current_room')->get();
         // return response()->json($renter);
         return view('renter.renter')->with('renter', $renter);
     }
@@ -49,6 +49,7 @@ class RenterController extends Controller
                 'nama' => 'required',
                 'alamat' => 'required',
                 'phone' => 'required',
+                'birthday' => 'required',
                 'phone2' => 'required',
                 'identitas' => 'required',
                 'nomor_identitas' => 'required'
@@ -69,6 +70,7 @@ class RenterController extends Controller
                 'alamat' => $request->alamat,
                 'phone' => $request->phone,
                 'phone2' => $request->phone2,
+                'birthday' => $request->birthday,
                 'identitas' => $request->identitas,
                 'no_identitas' => $request->nomor_identitas,
                 'kendaraan' => $request->kendaraan,
@@ -138,6 +140,7 @@ class RenterController extends Controller
                 'alamat' => 'required',
                 'phone' => 'required',
                 'phone2' => 'required',
+                'birthday' => 'required',
                 'identitas' => 'required',
                 'nomor_identitas' => 'required'
             ]);
@@ -160,6 +163,7 @@ class RenterController extends Controller
                 'alamat' => $request->alamat,
                 'phone' => $request->phone,
                 'phone2' => $request->phone2,
+                'birthday' => $request->birthday,
                 'identitas' => $request->identitas,
                 'no_identitas' => $request->nomor_identitas,
                 'kendaraan' => $request->kendaraan,
