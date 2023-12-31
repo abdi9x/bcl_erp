@@ -8,6 +8,7 @@ use carbon\carbon;
 
 $data = $data;
 ?>
+
 <div class="row">
     <div class="col-sm-12">
         <div class="page-title-box">
@@ -142,7 +143,14 @@ $data = $data;
                                             <td>{{$data->renter->nama}}</td>
                                             <td>{{$data->lama_sewa.' '.$data->jangka_sewa}}</td>
                                             <td>{{$data->tgl_mulai.' s/d '.$data->tgl_selesai}}</td>
-                                            <td class="text-right">{{$data->harga}} </td>
+                                            <td class="text-right text-nowrap">Rp {{number_format($data->harga,2)}} <a href="#" style="padding: 1px 10px;" data-toggle="dropdown" class="btn btn-xs btn-primary dropdown-toggle"><i class="fas fa-ellipsis-v"></i></a>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item ubah_tgl_masuk" href="javascript:void(0)" data-trans="{{$data->trans_id}}"><i class="fas fa-calendar-alt"></i> Ubah Tgl. Masuk (Reschedule)</a>
+                                                    <a class="dropdown-item refund" href="javascript:void(0)" data-trans="{{$data->trans_id}}"><i class="fas fa-hand-holding-usd"></i> Refund Transaksi</a>
+                                                    <div class="dropdown-divider"></div>
+                                                    <a class="dropdown-item" href="{{route('transaksi.delete',$data->trans_id)}}" onclick="deletes(event)"><i class="fas fa-trash"></i> Hapus Transaksi</a>
+                                                </div>
+                                            </td>
                                         </tr>
                                         <?php $no++; ?>
                                         @endforeach
@@ -157,6 +165,77 @@ $data = $data;
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="md_ubah_tgl_masuk" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h6 class="modal-title m-0 text-white" id="exampleModalDefaultLabel">Ubah Tgl Masuk (Reschedule)</h6>
+                <button type="button" class="close " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="la la-times"></i></span>
+                </button>
+            </div>
+            <form action="{{route('transaksi.reschedule')}}" method="POST">
+                @csrf
+                <input type="hidden" name="trans_id" id="trans_id">
+                <div class="modal-body">
+                    <div class="row mt-3">
+                        <div class="col-md-12 col-sm-12">
+                            <label class="">Tgl. Rencana Masuk</label>
+                            <input type="text" id="tgl_rencana_masuk" name="tgl_rencana_masuk" class="form-control datePicker">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="md_refund" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h6 class="modal-title m-0 text-white" id="exampleModalDefaultLabel">Refund Transaksi</h6>
+                <button type="button" class="close " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="la la-times"></i></span>
+                </button>
+            </div>
+            <form action="{{route('transaksi.refund')}}" method="POST">
+                @csrf
+                <input type="hidden" name="kode_trans" id="kode_trans">
+                <div class="modal-body">
+                    <div class="row mt-3">
+                        <div class="col-md-6 col-sm-12">
+                            <label class="">Tgl. Refund</label>
+                            <input type="text" id="tgl_refund" name="tgl_refund" class="form-control datePicker">
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <label class="">Nominal Refund</label>
+                            <input type="text" id="nominal_refund" required name="nominal_refund" class="form-control inputmask">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6 col-sm-12">
+                            <label class="">Tanggal Keluar</label>
+                            <input type="text" id="tgl_keluar" required name="tgl_keluar" class="form-control datePicker">
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <label class="">Alasan</label>
+                            <input type="text" id="alasan" name="alasan" class="form-control">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Refund</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -309,10 +388,10 @@ $data = $data;
             "language": {
                 "emptyTable": "Tidak ada data untuk ditampilkan, silakan gunakan filter",
             },
-            columnDefs: [{
-                targets: 7,
-                render: $.fn.dataTable.render.number(',', '.', 2, 'Rp ')
-            }],
+            // columnDefs: [{
+            //     targets: 7,
+            //     render: $.fn.dataTable.render.number(',', '.', 2, 'Rp ')
+            // }],
             rowGroup: {
                 dataSrc: [
                     function(row) {
@@ -500,6 +579,41 @@ $data = $data;
                 $('#paid_status').removeClass('text-danger').addClass('text-success').text('LUNAS');
             }
         });
+    });
+
+    function deletes(e) {
+        e.preventDefault();
+        var url = e.currentTarget.getAttribute('href');
+        $.confirm({
+            title: 'Hapus data ini?',
+            content: 'Aksi ini tidak dapat diurungkan',
+            buttons: {
+                confirm: {
+                    text: 'Ya',
+                    btnClass: 'btn-red',
+                    keys: ['enter'],
+                    action: function() {
+                        window.location.href = url;
+                    },
+                },
+                cancel: {
+                    text: 'Batal',
+                    action: function() {}
+                }
+            }
+        });
+    };
+
+    $('.refund').on('click', function() {
+        var kode_trans = $(this).data('trans');
+        console.log(kode_trans);
+        $('#kode_trans').val(kode_trans);
+        $('#md_refund').modal();
+    });
+    $('.ubah_tgl_masuk').on('click', function() {
+        var kode_trans = $(this).data('trans');
+        $('#trans_id').val(kode_trans);
+        $('#md_ubah_tgl_masuk').modal();
     });
 </script>
 @stop

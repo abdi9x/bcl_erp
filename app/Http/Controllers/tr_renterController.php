@@ -96,9 +96,111 @@ class tr_renterController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(tr_renter $tr_renter)
+    public function destroy(tr_renter $tr_renter, Request $request)
     {
-        //
+
+        try {
+            DB::beginTransaction();
+            $transaksi = tr_renter::where('trans_id', $request->id)->get();
+            $jurnal = Fin_jurnal::where('doc_id', $request->id)->get();
+            foreach ($transaksi as $key => $value) {
+                $value->delete();
+            }
+            foreach ($jurnal as $key => $value) {
+                $value->delete();
+            }
+            DB::commit();
+            return back()->with(['success' => 'Transaksi berhasil dihapus']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return back()->with(['error' => $th->getMessage()]);
+        }
+    }
+
+    public function refund(tr_renter $tr_renter, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $transaksi = tr_renter::where('trans_id', $request->kode_trans)->first();
+            if ($transaksi->harga < $request->nominal_refund) {
+                return back()->with(['error' => 'Nominal refund melebihi harga sewa']);
+            }
+            $transaksi->update([
+                'tgl_selesai' => $request->tgl_refund
+            ]);
+            $renter = renter::findorfail($transaksi->id_renter);
+
+            $no_exp = app(ControllersFinJurnalController::class)->get_no_exp();
+            $no_jurnal = app(ControllersFinJurnalController::class)->get_no_jurnal();
+            $data = Fin_jurnal::create([
+                'no_jurnal' => $no_jurnal,
+                'tanggal' => $request->tgl_refund,
+                'kode_akun' => '1-10101',
+                'debet' => 0,
+                'kredit' => $request->nominal_refund,
+                'kode_subledger' => null,
+                'catatan' => 'Refund Sewa Kamar kepada ' . $renter->nama . ', dengan alasan: ' . $request->alasan,
+                'index_kas' => 0,
+                'doc_id' => $no_exp,
+                'identity' => 'Refund',
+                'pos' => 'K',
+                'user_id' => auth()->user()->id,
+                'csrf' => time()
+            ]);
+            $data = Fin_jurnal::create([
+                'no_jurnal' => $no_jurnal,
+                'tanggal' => $request->tgl_refund,
+                'kode_akun' => '5-10102',
+                'debet' => $request->nominal_refund,
+                'kredit' => 0,
+                'kode_subledger' => null,
+                'catatan' => 'Refund Sewa Kamar kepada ' . $renter->nama . ', dengan alasan: ' . $request->alasan,
+                'index_kas' => 0,
+                'doc_id' => $no_exp,
+                'identity' => 'Refund',
+                'pos' => 'D',
+                'user_id' => auth()->user()->id,
+                'csrf' => time()
+            ]);
+            DB::commit();
+            return back()->with(['success' => 'Refund berhasil dilakukan']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return back()->with(['error' => $th->getMessage()]);
+        }
+    }
+
+    public function reschedule(Request $request)
+    {
+
+        try {
+            $transaksi = tr_renter::where('trans_id', $request->trans_id)->first();
+            switch ($transaksi->jangka_sewa) {
+                case 'Hari':
+                    $jangka_sewa = 'days';
+                    break;
+                case 'Minggu':
+                    $jangka_sewa = 'weeks';
+                    break;
+                case 'Bulan':
+                    $jangka_sewa = 'months';
+                    break;
+                case 'Tahun':
+                    $jangka_sewa = 'years';
+                    break;
+                default:
+                    $jangka_sewa = 'days';
+                    break;
+            }
+            $tgl_selesai = date('Y-m-d', strtotime("+$transaksi->jangka_waktu $jangka_sewa", strtotime($request->tgl_rencana_masuk)));
+            $transaksi->update([
+                'tgl_mulai' => $request->tgl_rencana_masuk,
+                'tgl_selesai' => $tgl_selesai
+            ]);
+            return back()->with(['success' => 'Tanggal masuk berhasil diubah']);
+        } catch (\Throwable $th) {
+            return back()->with(['error' => $th->getMessage()]);
+        }
     }
     public function sewa(tr_renter $tr_renter, Request $request)
     {
@@ -157,6 +259,7 @@ class tr_renterController extends Controller
             }
             $periode_normal = date('Y-m-d', strtotime("+$pl->jangka_waktu $jangka_sewa", strtotime($request->tgl_masuk)));
             $periode_bonus = date('Y-m-d', strtotime("+$pl->bonus_waktu $bonus_sewa", strtotime($periode_normal)));
+            $Kamar = Rooms::findorfail($request->kamar);
             tr_renter::create([
                 'trans_id' => $no_trans,
                 'identity' => 'Baru',
@@ -228,5 +331,15 @@ class tr_renterController extends Controller
         STR_TO_DATE(now(), '%Y-%m-%d' ))");
         $result = $data[0];
         return $result->no_trans;
+    }
+
+    public function ranking_penyewa()
+    {
+        $data = tr_renter::with('renter')->select(DB::raw('*, sum(
+            DATEDIFF( tr_renter.tgl_selesai, tr_renter.tgl_mulai )) AS total_lama_sewa '))
+            ->groupby('id_renter')
+            ->orderby('total_lama_sewa', 'DESC')
+            ->get();
+        return response()->json($data);
     }
 }

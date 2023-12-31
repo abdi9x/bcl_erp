@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Fin_jurnal;
 use App\Models\Inventory;
+use App\Models\renter;
+use App\Models\tr_renter;
 use App\Models\Rooms;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -88,7 +90,6 @@ class HomeController extends Controller
         }
         $response->needed_maintanance = $needed_maintanance;
 
-
         $room_stat = Rooms::leftjoin('tr_renter', function ($join) {
             $join->on('tr_renter.room_id', '=', 'rooms.id');
             $join->where(DB::raw('year(tr_renter.tgl_mulai)'), '=', Carbon::now()->format('Y'));
@@ -99,7 +100,14 @@ class HomeController extends Controller
             $stat->total_value[] = $data->total_value;
         }
         $response->room_stat = $stat;
-        // return response()->json($response); 
+
+        $ranking_penyewa = app(tr_renterController::class)->ranking_penyewa();
+        $response->ranking_penyewa = $ranking_penyewa;
+        // return response()->json($response);
+        // $group_jenis_kelamin = renter::with('current_room')
+        // ->sum('')
+        // ->get();
+        // return response()->json($group_jenis_kelamin);
         return view('home')->with('response', (object)$response);
     }
 }

@@ -1,6 +1,22 @@
 @extends('layouts.app')
 
 @section('content')
+<?php
+function convert($sum)
+{
+    $years = floor($sum / 365);
+    $months = floor(($sum - ($years * 365)) / 30.5);
+    $days = round($sum - ($years * 365) - ($months * 30.5));
+    // echo "Days received: " . $sum . " days <br />";
+    if ($years == 0) $years = "";
+    else $years = $years . " Tahun, ";
+    if ($months == 0) $months = "";
+    else $months = $months . " Bulan, ";
+    if ($days == 0) $days = "0 Hari";
+    else $days = $days . " Hari";
+    return $years . $months  . $days;
+}
+?>
 <!-- Page-Title -->
 <div class="row">
     <div class="col-sm-12">
@@ -126,39 +142,24 @@
                             <div id="ana_device" class="apex-charts"></div>
                             <h6 class="bg-light-alt py-3 px-2 mb-0">
                                 <i data-feather="calendar" class="align-self-center icon-xs mr-1"></i>
-                                01 January 2020 to 31 December 2020
+                                TOP 5 Penyewa Terlama
                             </h6>
                         </div>
                         <div class="table-responsive mt-2">
                             <table class="table border-dashed mb-0">
                                 <thead>
                                     <tr>
-                                        <th>Device</th>
-                                        <th class="text-right">Sassions</th>
-                                        <th class="text-right">Day</th>
-                                        <th class="text-right">Week</th>
+                                        <th>Nama</th>
+                                        <th class="text-right">Total Lama Sewa</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @foreach($response->ranking_penyewa->original->take(5) as $data)
                                     <tr>
-                                        <td>Dasktops</td>
-                                        <td class="text-right">1843</td>
-                                        <td class="text-right">-3</td>
-                                        <td class="text-right">-12</td>
+                                        <td class="text-truncated">{{$data->renter->nama}}</td>
+                                        <td class="text-right">{{convert($data->total_lama_sewa)}}</td>
                                     </tr>
-                                    <tr>
-                                        <td>Tablets</td>
-                                        <td class="text-right">2543</td>
-                                        <td class="text-right">-5</td>
-                                        <td class="text-right">-2</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Mobiles</td>
-                                        <td class="text-right">3654</td>
-                                        <td class="text-right">-5</td>
-                                        <td class="text-right">-6</td>
-                                    </tr>
-
+                                    @endforeach
                                 </tbody>
                             </table><!--end /table-->
                         </div><!--end /div-->
@@ -172,8 +173,8 @@
 </div><!--end row-->
 @section('pagescript')
 <script>
-   var rooms = {!!json_encode($response->room_stat->room_name)!!};
-    var total_value = {!!json_encode($response->room_stat->total_value)!!};
+    var rooms = {!!json_encode($response -> room_stat -> room_name) !!};
+    var total_value = {!!json_encode($response -> room_stat -> total_value) !!};
 </script>
 <script src="{{ URL::asset('plugins/apex-charts/apexcharts.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/jquery.analytics_dashboard.init.js') }}"></script>

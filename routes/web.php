@@ -103,6 +103,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/rooms', [RoomsController::class, 'index'])->name('rooms');
         ROute::any('/transaksi', [tr_renterController::class, 'index'])->name('transaksi.index');
         Route::get('/transaksi/show/{id}', [tr_renterController::class, 'show'])->name('transaksi.show');
+        Route::get('/transaksi/delete/{id}', [tr_renterController::class, 'destroy'])->name('transaksi.delete');
+        Route::post('/transaksi/refund', [tr_renterController::class, 'refund'])->name('transaksi.refund');
+        Route::post('/transaksi/reschedule', [tr_renterController::class, 'reschedule'])->name('transaksi.reschedule');
     });
     Route::group(['middleware' => ['role:Administrator']], function () {
         route::get('/users', [UsersController::class, 'index'])->name('users.index');
