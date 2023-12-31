@@ -38,6 +38,10 @@ Auth::routes();
 // })->middleware(['auth', 'verified'])->name('home');
 
 Route::middleware('auth')->group(function () {
+    Route::group(['prefix' => 'api'], function () {
+        // Route::get('/rooms', [RoomsController::class, 'api_rooms'])->name('api.rooms');
+    });
+
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::post('/resetpassword', [UsersController::class, 'resetpassword'])->name('resetpassword');
     Route::group(['middleware' => ['role:Administrator|Keuangan|Admin Kamar']], function () {

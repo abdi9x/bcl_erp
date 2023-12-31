@@ -367,6 +367,7 @@ $inv = $data;
         var table_bb = $("#tb_kamar").DataTable({
             order: [
                 [4, 'asc'],
+                [5, 'asc'],
                 [8, 'asc']
             ],
             "paging": false,
@@ -378,6 +379,9 @@ $inv = $data;
                 dataSrc: [
                     function(row) {
                         return '<i class="fas fa-chevron-down"></i> ' + row[4];
+                    },
+                    function(row) {
+                        return '<i class="fas fa-chevron-down"></i> ' + row[5];
                     }
                 ],
                 endRender: function(rows, group) {
