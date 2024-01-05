@@ -145,6 +145,7 @@ $categories = $categories;
                         <div class="col-md-6 col-sm-12">
                             <label class="">Jangka Sewa</label>
                             <select class="mb-3 select2" name="jangka_sewa" required style="width: 100%" data-placeholder="Pilih...">
+                                <option value="Hari">Hari</option>
                                 <option value="Minggu">Minggu</option>
                                 <option value="Bulan">Bulan</option>
                                 <option value="Tahun">Tahun</option>
