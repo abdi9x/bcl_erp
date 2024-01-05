@@ -19,6 +19,10 @@ return [
     'name' => env('APP_NAME', 'Belova Premium Hostel'),
     'tagline' => env('APP_TAGLINE', '"Best Premium Hostel in Solo"'),
     'tagline2' => env('APP_TAGLINE2', 'Center Living'),
+    'alamat' => 'Jl. Melon Raya No.1, Karangasem, Kec. Laweyan,',
+    'alamat2' => ' Kota Surakarta, Jawa Tengah 57145',
+    'nama_rek' => 'Andhika Putri P',
+    'no_rek' => '1169260391',
     /*
     |--------------------------------------------------------------------------
     | Application Environment

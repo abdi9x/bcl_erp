@@ -77,6 +77,19 @@ class tr_renterController extends Controller
         return response()->json($transaksi);
     }
 
+    public function cetak(tr_renter $tr_renter, Request $request)
+    {
+        $transaksi = tr_renter::with('renter')->with('room', function ($query) {
+            $query->with('category');
+        })
+            ->with('jurnal', function ($query) {
+                $query->leftjoin('users', 'users.id', '=', 'fin_jurnal.user_id');
+                $query->orderby('fin_jurnal.tanggal', 'ASC');
+            })
+            ->where('trans_id', '=', $request->id)->first();
+        return view('transaksi.cetak', compact('transaksi'));
+        return response()->json($transaksi);
+    }
     /**
      * Show the form for editing the specified resource.
      */

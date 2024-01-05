@@ -9290,3 +9290,21 @@ u {
 .mfp-bg {
     z-index: 20000 !important;
 }
+
+.invoice-head {
+    border-bottom: 4px double #b6c2e4;
+}
+
+.invoice-head .logo-lg.logo-light {
+    display: none;
+}
+
+.invoice-head .contact-detail li {
+    border-left: 2px solid #b6c2e4;
+}
+
+.invoice-head .contact-detail li i {
+    font-size: 24px;
+    color: #12a4ed;
+    margin-bottom: 5px;
+}

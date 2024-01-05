@@ -147,6 +147,7 @@ $data = $data;
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item ubah_tgl_masuk" href="javascript:void(0)" data-trans="{{$data->trans_id}}"><i class="fas fa-calendar-alt"></i> Ubah Tgl. Masuk (Reschedule)</a>
                                                     <a class="dropdown-item refund" href="javascript:void(0)" data-trans="{{$data->trans_id}}"><i class="fas fa-hand-holding-usd"></i> Refund Transaksi</a>
+                                                    <a class="dropdown-item" href="{{route('transaksi.cetak',$data->trans_id)}}"><i class="fas fa-print"></i> Cetak Transaksi</a>
                                                     <div class="dropdown-divider"></div>
                                                     <a class="dropdown-item" href="{{route('transaksi.delete',$data->trans_id)}}" onclick="deletes(event)"><i class="fas fa-trash"></i> Hapus Transaksi</a>
                                                 </div>
