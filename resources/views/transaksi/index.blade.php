@@ -18,7 +18,10 @@ $data = $data;
                     <span>{{config('app.name')}}</span>
                 </div><!--end col-->
                 <div class="col-auto align-self-center">
-                    <button class="btn btn-outline-dashed btn-success waves-effect waves-light" data-toggle="modal" data-target="#md_sewa" id="bt_sewa">
+                    <button class="btn btn-outline-dashed btn-square btn-purple waves-effect waves-light" data-toggle="modal" data-target="#md_extra" id="bt_extra">
+                        <i class="mdi mdi-plus"></i> Tambahan Sewa
+                    </button>
+                    <button class="btn btn-outline-dashed btn-square btn-success waves-effect waves-light" data-toggle="modal" data-target="#md_sewa" id="bt_sewa">
                         <i class="mdi mdi-check-all"></i> Sewa Kamar
                     </button>
                 </div><!--end col-->
@@ -27,7 +30,7 @@ $data = $data;
     </div><!--end col-->
 </div><!--end row-->
 
-@if($belum_lunas->count()>0)
+@if($belum_lunas->count()>0 or $belum_lunas_extra->count()>0)
 <div class="row mb-2">
     <div class="col-lg-12">
         <div class="card">
@@ -56,19 +59,39 @@ $data = $data;
                         <tbody>
                             <?php
                             $no = 1;
-                            foreach ($belum_lunas as $value) {
+                            if ($belum_lunas->count() > 0) {
+                                foreach ($belum_lunas as $value) {
                             ?>
-                                <tr>
-                                    <td><?= $no ?></td>
-                                    <td><?= $value->tanggal ?></td>
-                                    <td><?= $value->doc_id ?></td>
-                                    <td><?= $value->identity == 'Sewa Kamar' ? 'Pendapatan Sewa' : 'Pendapatan Lain' ?></td>
-                                    <td><?= $value->catatan ?></td>
-                                    <td class="text-right">Rp <?= number_format($value->harga, 2) ?></td>
-                                    <td class="text-right text-danger font-weight-bold">Rp <?= number_format($value->kurang, 2) ?></td>
-                                </tr>
+                                    <tr>
+                                        <td><?= $no ?></td>
+                                        <td><?= $value->tanggal ?></td>
+                                        <td><?= $value->doc_id ?></td>
+                                        <td><?= $value->identity == 'Sewa Kamar' ? 'Pendapatan Sewa' : 'Pendapatan Lain' ?></td>
+                                        <td><?= $value->catatan ?></td>
+                                        <td class="text-right">Rp <?= number_format($value->harga, 2) ?></td>
+                                        <td class="text-right text-danger font-weight-bold">Rp <?= number_format($value->kurang, 2) ?></td>
+                                    </tr>
+                                <?php
+                                    $no++;
+                                }
+                            }
+                            if ($belum_lunas_extra->count() > 0) {
+                                $total_jurnal = 0;
+                                foreach ($belum_lunas_extra as $value) {
+                                    $total_harga = $value->harga * $value->lama_sewa * $value->qty;
+                                ?>
+                                    <tr>
+                                        <td><?= $no ?></td>
+                                        <td><?= $value->tgl_mulai ?></td>
+                                        <td><?= $value->kode ?></td>
+                                        <td><?= 'Tambahan Sewa' ?></td>
+                                        <td><?= $value->nama . ' ' . $value->lama_sewa . ' ' . $value->jangka_sewa . ' ' . $value->renter->nama ?></td>
+                                        <td class="text-right">Rp <?= number_format($total_harga, 2) ?></td>
+                                        <td class="text-right text-danger font-weight-bold">Rp <?= number_format($total_harga - ($value->total_kredit == null ? 0 : $value->total_kredit), 2) ?></td>
+                                    </tr>
                             <?php
-                                $no++;
+                                    $no++;
+                                }
                             }
                             ?>
                         </tbody>
@@ -139,7 +162,7 @@ $data = $data;
                                             <td class="text-center">{{ $no }}</td>
                                             <td class="text-center">{{ $data->tanggal }}</td>
                                             <td><u><a href="javascript:void(0)" data-id="{{$data->trans_id}}" class="dt_transaksi">{{$data->trans_id}}</a></u></td>
-                                            <td>{{$data->room->room_name}}</td>
+                                            <td>{{$data->room->room_name}} <span class="badge badge-success">{{count($data->tambahan)>0?'+':''}}</span></td>
                                             <td>{{$data->renter->nama}}</td>
                                             <td>{{$data->lama_sewa.' '.$data->jangka_sewa}}</td>
                                             <td>{{$data->tgl_mulai.' s/d '.$data->tgl_selesai}}</td>
@@ -374,12 +397,76 @@ $data = $data;
         </div>
     </div>
 </div>
+<div class="modal fade" id="md_extra" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h6 class="modal-title m-0 text-white" id="exampleModalDefaultLabel">Tambahan Sewa</h6>
+                <button type="button" class="close " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="la la-times"></i></span>
+                </button>
+            </div>
+            <form action="{{route('extrarent.store')}}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <label class="">Item</label>
+                            <select class="mb-3 select2" name="pricelist" id="pricelist_extra" required style="width: 100%" data-placeholder="Pilih">
+                                <option value=""></option>
+                                @foreach($extra_pricelist as $pl_xtra)
+                                <option data-lama="{{$pl_xtra->jangka_sewa}}" value="{{$pl_xtra->id}}">{{$pl_xtra->nama.' ('.number_format($pl_xtra->harga,2).'/'.$pl_xtra->jangka_sewa.')'}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <label class="">Tanggal Sewa</label>
+                            <input type="text" id="tgl_sewa" required name="tgl_sewa" class="form-control datePicker">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6 col-sm-12">
+                            <label class="">Jumlah Item</label>
+                            <input type="text" id="jml_item" required name="jml_item" class="form-control inputmask">
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <label class="">Lama Sewa</label>
+                            <input type="text" id="lama_sewa" required name="lama_sewa" data-inputmask-suffix="" class="form-control inputmask">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <label class="">Transaksi Penyewa</label>
+                        <select class="mb-3 select2" name="trans_id" id="trans_id" required style="width: 100%" data-placeholder="Pilih">
+                            <option value=""></option>
+                            @foreach($rooms as $room)
+                            @if($room->renter!=null)
+                            <option value="{{$room->renter->trans_id}}">{{$room->room_name.' ('.$room->renter->nama.')'}}</option>
+                            @endif
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 @section('pagescript')
 <script>
     var t = moment('<?= $start ?>', 'YYYY-MM-DD'),
         a = moment('<?= $end ?>', 'YYYY-MM-DD');
     $(document).ready(function() {
+        $('#pricelist_extra').on('select2:select', function() {
+            var data = $(this).find(':selected');
+            var lama_sewa = data.data('lama');
+            console.log(lama_sewa);
+            $('#lama_sewa').attr('data-inputmask-suffix', " " + lama_sewa);
+            init_component();
+        });
         var table_bb = $("#tb_kamar").DataTable({
             order: [
                 [1, 'DESC']
@@ -573,8 +660,17 @@ $data = $data;
                 total += parseInt(value.kredit);
                 $('#user_id').text(value.name);
             });
-            $('#total_exp').text('Rp ' + $.number(total, 2));
-            if (data.harga < total) {
+            var total_tbh = 0;
+            var total_dibayar = 0;
+            $.each(data.tambahan, function(index, value) {
+                $('#tb_tr tbody').append('<tr><td>' + value.tgl_mulai + '</td><td>' + value.nama + '</td><td class="text-right">Rp ' + $.number(value.harga, 2) + '</td></tr>');
+                total_tbh += parseInt(value.harga);
+                $.each(value.jurnal, function(index, val) {
+                    total_dibayar += parseInt(val.kredit);
+                });
+            });
+            $('#total_exp').text('Rp ' + $.number(total + total_tbh, 2));
+            if (parseInt(data.harga) + total_tbh > total + total_dibayar) {
                 $('#paid_status').removeClass('text-success').addClass('text-danger').text('BELUM LUNAS');
             } else {
                 $('#paid_status').removeClass('text-danger').addClass('text-success').text('LUNAS');

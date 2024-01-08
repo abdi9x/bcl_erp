@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\extra_pricelist;
 use App\Models\Pricelist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,11 @@ class PricelistController extends Controller
         $pricelist = Pricelist::join('room_category', 'pricelist.room_category', '=', 'room_category.id_category')
             ->select('pricelist.*', 'room_category.category_name as category_name', 'room_category.id_category as category_id')->get();
         $category = DB::table('room_category')->get();
-        return view('pricelist.pricelist')->with('pricelist', $pricelist)->with('categories', $category);
+        $pl_tambahan = extra_pricelist::all();
+        return view('pricelist.pricelist')
+            ->with('pricelist', $pricelist)
+            ->with('categories', $category)
+            ->with('pl_tambahan', $pl_tambahan);
     }
 
     /**

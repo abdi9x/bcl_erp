@@ -17,7 +17,10 @@ $categories = $categories;
                 <div class="col-auto align-self-center">
                     @can('Tambah Pricelist')
                     <button class="btn btn-sm btn-danger waves-effect waves-light" data-toggle="modal" data-target="#md_tambah_pricelist" id="bt_filter">
-                        <i class="mdi mdi-plus"></i> Tambah Harga
+                        <i class="mdi mdi-plus"></i> Tambah Harga Kamar
+                    </button>
+                    <button class="btn btn-sm btn-danger waves-effect waves-light" data-toggle="modal" data-target="#md_tambah_tambahan" id="bt_tambahan">
+                        <i class="mdi mdi-plus"></i> Tambah Harga Tambahan
                     </button>
                     @endcan
                 </div><!--end col-->
@@ -27,7 +30,7 @@ $categories = $categories;
 </div><!--end row-->
 
 <div class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-6">
         <div class="card">
             <div class="card-header bg-dark">
                 <div class="row align-self-center">
@@ -77,14 +80,14 @@ $categories = $categories;
                                             <td>{{$pl->bonus_waktu.' '.$pl->bonus_sewa}}</td>
                                             <td>{{$pl->category_name}}</td>
                                             <td class=" hidden">{{$pl->category_id}}</td>
-                                            <td class="text-right">
+                                            <td class="text-right text-nowrap">
                                                 @can('Edit Pricelist')
-                                                <a href="#" data-id="{{$pl->id}}" class="btn btn-xs btn-outline-primary edit_pricelist">
+                                                <a href="#" data-id="{{$pl->id}}" class="btn btn-xs btn-warning edit_pricelist">
                                                     <i data-feather="edit" class="align-self-center icon-xs"></i>
                                                 </a>
                                                 @endcan
                                                 @can('Hapus Pricelist')
-                                                <a href="{{route('pricelist.delete',$pl->id)}}" onclick="delete_harga(event)" class="btn btn-xs btn-outline-danger">
+                                                <a href="{{route('pricelist.delete',$pl->id)}}" onclick="delete_harga(event)" class="btn btn-xs btn-danger">
                                                     <i data-feather="trash" class="align-self-center icon-xs"></i>
                                                 </a>
                                                 @endcan
@@ -103,6 +106,173 @@ $categories = $categories;
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header bg-dark">
+                <div class="row align-self-center">
+                    <div class="col align-self-center">
+                        <h4 class="card-title text-white">Daftar Harga Tambahan</h4>
+                    </div>
+                    <div class="col-auto align-self-center">
+
+                        <a href="#" class="btn btn-sm btn-light waves-effect waves-light dropdown-toggle" data-toggle="dropdown">
+                            <i class="far fa-file-alt"></i> Export <i class="las la-angle-down "></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-bottom side-color side-color-dark">
+                            <a class="dropdown-item btn_exls" href="#">Excel</a>
+                            <a class="dropdown-item btn_epdf" href="#">PDF</a>
+                            <a class="dropdown-item btn_eprint" href="#">Print</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive-sm">
+                    <div id="tb_penjualan_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table table-sm table-hover mb-0 dataTable no-footer" id="tb_tambahan">
+                                    <thead class="thead-info bg-info">
+                                        <tr class="text-white">
+                                            <th class="text-center text-white">No</th>
+                                            <th class="text-center text-white">Nama</th>
+                                            <th class="text-white">Lama Sewa</th>
+                                            <th class="text-center text-white">Harga</th>
+                                            <th class="text-right"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $no = 1;
+                                        ?>
+                                        @foreach($pl_tambahan as $pl)
+                                        <tr>
+                                            <td class="text-center">{{ $no }}</td>
+                                            <td class="">{{$pl->nama}}</td>
+                                            <td>{{$pl->qty.' '.$pl->jangka_sewa}}</td>
+                                            <td class="text-right">Rp {{ number_format($pl->harga,2,',') }}</td>
+                                            <td class="text-right text-nowrap">
+                                                @can('Edit Pricelist')
+                                                <a href="#" data-id="{{$pl->id}}" class="btn btn-xs btn-warning edit_tambahan">
+                                                    <i data-feather="edit" class="align-self-center icon-xs"></i>
+                                                </a>
+                                                @endcan
+                                                @can('Hapus Pricelist')
+                                                <a href="{{route('extra_pl.delete',$pl->id)}}" onclick="delete_harga(event)" class="btn btn-xs btn-danger">
+                                                    <i data-feather="trash" class="align-self-center icon-xs"></i>
+                                                </a>
+                                                @endcan
+                                            </td>
+                                        </tr>
+                                        <?php $no++; ?>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-5"></div>
+                            <div class="col-sm-12 col-md-7"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="md_edit_tambahan" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h6 class="modal-title m-0 text-white" id="exampleModalDefaultLabel">Edit Daftar Harga Tamban</h6>
+                <button type="button" class="close " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="la la-times"></i></span>
+                </button>
+            </div>
+            <form action="{{route('extra_pl.update')}}" method="POST">
+                @csrf
+                <input type="hidden" name="id" id="id_tambahan" value="" />
+                <div class="modal-body">
+                    <div class="row mb-2">
+                        <div class="col-md-6 col-sm-12">
+                            <label class="">Nama</label>
+                            <input type="text" id="nama_tbh" name="nama" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <label class="">Harga</label>
+                            <input type="text" id="harga_tbh" name="harga" required class="form-control inputmask">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <label class="">Jangka Waktu</label>
+                            <input type="text" id="jangka_waktu_tbh" name="jangka_waktu" required class="form-control inputmask" data-inputmask-min="1">
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <label class="">Jangka Sewa</label>
+                            <select class="mb-3 select2" id="jangka_sewa_tbh" name="jangka_sewa" required style="width: 100%" data-placeholder="Pilih...">
+                                <option value="Hari">Hari</option>
+                                <option value="Minggu">Minggu</option>
+                                <option value="Bulan">Bulan</option>
+                                <option value="Tahun">Tahun</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="md_tambah_tambahan" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h6 class="modal-title m-0 text-white" id="exampleModalDefaultLabel">Tambah Daftar Harga Tamban</h6>
+                <button type="button" class="close " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="la la-times"></i></span>
+                </button>
+            </div>
+            <form action="{{route('extra_pl.store')}}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="row mb-2">
+                        <div class="col-md-6 col-sm-12">
+                            <label class="">Nama</label>
+                            <input type="text" name="nama" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <label class="">Harga</label>
+                            <input type="text" name="harga" required class="form-control inputmask">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <label class="">Jangka Waktu</label>
+                            <input type="text" name="jangka_waktu" required class="form-control inputmask" data-inputmask-min="1">
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <label class="">Jangka Sewa</label>
+                            <select class="mb-3 select2" name="jangka_sewa" required style="width: 100%" data-placeholder="Pilih...">
+                                <option value="Hari">Hari</option>
+                                <option value="Minggu">Minggu</option>
+                                <option value="Bulan">Bulan</option>
+                                <option value="Tahun">Tahun</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -162,6 +332,7 @@ $categories = $categories;
                             <label class="">Bonus Sewa</label>
                             <select class="mb-3 select2" name="bonus_sewa" style="width: 100%" data-placeholder="Pilih...">
                                 <option value=""></option>
+                                <option value="Hari">Hari</option>
                                 <option value="Minggu">Minggu</option>
                                 <option value="Bulan">Bulan</option>
                                 <option value="Tahun">Tahun</option>
@@ -216,6 +387,7 @@ $categories = $categories;
                         <div class="col-md-6 col-sm-12">
                             <label class="">Jangka Sewa</label>
                             <select class="mb-3 select2" id="jangka_sewa" name="jangka_sewa" required style="width: 100%" data-placeholder="Pilih...">
+                                <option value="Hari">Hari</option>
                                 <option value="Minggu">Minggu</option>
                                 <option value="Bulan">Bulan</option>
                                 <option value="Tahun">Tahun</option>
@@ -232,6 +404,7 @@ $categories = $categories;
                             <label class="">Bonus Sewa</label>
                             <select class="mb-3 select2" id="bonus_sewa" name="bonus_sewa" style="width: 100%" data-placeholder="Pilih...">
                                 <option value=""></option>
+                                <option value="Hari">Hari</option>
                                 <option value="Minggu">Minggu</option>
                                 <option value="Bulan">Bulan</option>
                                 <option value="Tahun">Tahun</option>
@@ -362,6 +535,25 @@ $categories = $categories;
             }
         });
     });
+    $('.edit_tambahan').on('click', function() {
+        var id = $(this).data('id');
+        $.ajax({
+            url: "{{route('extra_pl.edit', ':id')}}",
+            type: "GET",
+            data: {
+                id: id
+            },
+            success: function(data) {
+                console.log(data);
+                $('#id_tambahan').val(data.id);
+                $('#nama_tbh').val(data.nama);
+                $('#harga_tbh').val(data.harga);
+                $('#jangka_waktu_tbh').val(data.qty);
+                $('#jangka_sewa_tbh').val(data.jangka_sewa).trigger('change');
+                $('#md_edit_tambahan').modal('show');
+            }
+        });
+    })
     $('.edit_pricelist').on('click', function() {
         var id = $(this).data('id');
         $.ajax({

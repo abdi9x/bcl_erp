@@ -6,6 +6,7 @@ use App\Models\expense_receipt;
 use App\Models\Fin_jurnal;
 use App\Models\Inventory;
 use App\Models\renter;
+use App\Models\tb_extra_rent;
 use App\Models\tr_renter;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -74,8 +75,23 @@ class FinJurnalController extends Controller
             ->havingRaw('(tr_renter.harga - sum(kredit)) > 0')
             ->orderby('fin_jurnal.tanggal', 'DESC')
             ->get();
-
-        return view('finance.income')->with('data', $data)->with('start', $start)->with('end', $end)->with('belum_lunas', $belum_lunas);
+        $belum_lunas_extra = tb_extra_rent::withsum('jurnal as total_kredit', 'kredit')
+            ->get()
+            ->filter(function ($item) {
+                // $detail = tr_renter::where('trans_id', $item->parent_trans)->with('renter')->first();
+                return ($item->harga * $item->lama_sewa * $item->qty) - $item->total_kredit > 0;
+            });
+        foreach ($belum_lunas_extra as $val) {
+            $detail = tr_renter::where('trans_id', $val->parent_trans)->with('renter')->first();
+            $val->renter = $detail->renter;
+        }
+        // return response()->json($belum_lunas_extra);
+        return view('finance.income')
+            ->with('data', $data)
+            ->with('start', $start)
+            ->with('end', $end)
+            ->with('belum_lunas', $belum_lunas)
+            ->with('belum_lunas_extra', $belum_lunas_extra);
     }
 
     /**
@@ -92,10 +108,15 @@ class FinJurnalController extends Controller
     public function store(Request $request, tr_renter $tr_renter)
     {
         $no_jurnal = $this->get_no_jurnal();
-
-        $tr_renter = tr_renter::where('trans_id', '=', $request->transaksi)->first();
+        $extra_rent = tb_extra_rent::where('kode', $request->transaksi)->first();
+        $tr_renter = tr_renter::where('trans_id', '=', $extra_rent->parent_trans)->first();
         $renter = renter::findorfail($tr_renter->id_renter);
-
+        // $extra_rent = tb_extra_rent::where('trans_id_renter', $request->transaksi)->first();
+        if ($request->section == 'Tambahan Sewa') {
+            $catatan = 'Pembayaran Tambahan Sewa ' . $extra_rent->qty . ' ' . $extra_rent->nama . ' selama ' . $extra_rent->lama_sewa . ' ' . $extra_rent->jangka_sewa . ' Oleh ' . $renter->nama . '. dengan catatan: ' . $request->keterangan;
+        } else {
+            $catatan = 'Pembayaran Sewa Kamar dari ' . $renter->nama . ' dengan catatan: ' . $request->keterangan;
+        }
         DB::beginTransaction();
         try {
             Fin_jurnal::create([
@@ -105,10 +126,10 @@ class FinJurnalController extends Controller
                 'debet' => 0,
                 'kredit' => $request->nominal,
                 'kode_subledger' => $request->renter,
-                'catatan' => 'Pembayaran Sewa Kamar dari ' . $renter->nama . ' dengan catatan: ' . $request->keterangan,
+                'catatan' => $catatan,
                 'index_kas' => 0,
                 'doc_id' => $request->transaksi,
-                'identity' => 'Sewa Kamar',
+                'identity' => $request->section,
                 'pos' => 'K',
                 'user_id' => auth()->user()->id,
                 'csrf' => time()
@@ -120,10 +141,10 @@ class FinJurnalController extends Controller
                 'debet' => $request->nominal,
                 'kredit' => 0,
                 'kode_subledger' => null,
-                'catatan' => 'Pembayaran Sewa Kamar dari ' . $renter->nama . ' dengan catatan: ' . $request->keterangan,
+                'catatan' => $catatan,
                 'index_kas' => 0,
                 'doc_id' => $request->transaksi,
-                'identity' => 'Sewa Kamar',
+                'identity' => $request->section,
                 'pos' => 'D',
                 'user_id' => auth()->user()->id,
                 'csrf' => time()

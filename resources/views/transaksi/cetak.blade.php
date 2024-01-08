@@ -129,6 +129,30 @@ foreach ($transaksi->jurnal as $jurnal) {
                                                 <td class="text-center">{{$transaksi->tgl_selesai}}</td>
                                                 <td class="text-right">Rp {{number_format($transaksi->harga,2)}}</td>
                                             </tr>
+                                            <?php
+                                            $no++;
+                                            $total_tbh = 0;
+                                            $total_dibayar = 0;
+                                            ?>
+
+                                            @foreach($transaksi->tambahan as $tbh)
+                                            <?php
+                                            $total_tbh += $tbh->harga;
+
+                                            foreach ($tbh->jurnal as $jurnal) {
+                                                $total_dibayar += $jurnal->kredit;
+                                            }
+                                            ?>
+                                            <tr>
+                                                <td>{{$no}}</td>
+                                                <td>Tambahan {{$tbh->nama}}</td>
+                                                <td>{{$transaksi->room->category->category_name}}</td>
+                                                <td>{{$tbh->lama_sewa.' '.$tbh->jangka_sewa}}</td>
+                                                <td class="text-center">{{$tbh->tgl_mulai}}</td>
+                                                <td class="text-center">{{$tbh->tgl_selesai}}</td>
+                                                <td class="text-right">Rp {{number_format($tbh->harga,2)}}</td>
+                                            </tr>
+                                            @endforeach
                                             <tr>
                                                 <td height="100"></td>
                                                 <td></td>
@@ -146,20 +170,18 @@ foreach ($transaksi->jurnal as $jurnal) {
                                             <tr>
                                                 <td colspan="5" class="border-0"></td>
                                                 <td class="border-0 font-14 text-dark text-right"><b>Sub Total</b></td>
-                                                <td class="border-0 font-14 text-dark text-right"><b>Rp {{number_format($transaksi->harga,2)}}</b></td>
+                                                <td class="border-0 font-14 text-dark text-right"><b>Rp {{number_format($transaksi->harga+$total_tbh,2)}}</b></td>
                                             </tr>
 
-                                            @if($total_masuk < $transaksi->harga)
                                                 <tr>
                                                     <th colspan="5" class="border-0"></th>
                                                     <td class="border-0 font-14 text-dark text-right text-nowrap"><b>DP/Pembayaran</b></td>
-                                                    <td class="border-0 font-14 text-dark text-right"><b>Rp {{number_format($total_masuk)}}</b></td>
+                                                    <td class="border-0 font-14 text-dark text-right"><b>Rp {{number_format($total_masuk+$total_dibayar,2)}}</b></td>
                                                 </tr>
-                                                @endif
                                                 <tr style="background-color: #000000 !important; color: white;">
                                                     <th colspan="5" class="border-0"></th>
                                                     <td class="border-0 font-14 text-right"><b>Sisa/Kurang</b></td>
-                                                    <td class="border-0 font-14 text-right text-nowrap"><b>Rp {{number_format($transaksi->harga-$total_masuk)}}</b></td>
+                                                    <td class="border-0 font-14 text-right text-nowrap"><b>Rp {{number_format($transaksi->harga+$total_tbh-$total_dibayar-$total_masuk,2)}}</b></td>
                                                 </tr>
                                         </tbody>
                                     </table>
@@ -238,7 +260,7 @@ foreach ($transaksi->jurnal as $jurnal) {
             getCanvas = canvas;
             canvas.toBlob(function(blob) {
                 // Generate file download
-                window.saveAs(blob,'Receipt_{{$transaksi->renter->nama}}.png');
+                window.saveAs(blob, 'Receipt_{{$transaksi->renter->nama}}.png');
             });
             $('.d-print-none').removeClass('hidden');
         });

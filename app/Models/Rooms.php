@@ -30,6 +30,10 @@ class Rooms extends Model
 
     public function renter()
     {
-        return $this->hasOne(tr_renter::class, 'room_id')->leftjoin('renter', 'renter.id', '=', 'tr_renter.id_renter')->where('tgl_mulai', '<=', Carbon::now())->where('tgl_selesai', '>=', Carbon::now());
+        return $this->hasOne(tr_renter::class, 'room_id')
+            ->leftjoin('renter', 'renter.id', '=', 'tr_renter.id_renter')
+            ->where('tgl_mulai', '<=', Carbon::now()->format('Y-m-d'))
+            ->where('tgl_selesai', '>=', Carbon::now()->format('Y-m-d'));
     }
+    
 }

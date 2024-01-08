@@ -424,6 +424,7 @@ $data = $data;
     });
     $("#filter_faktur").daterangepicker({
         // minDate: periode,
+        showDropdowns: true,
         locale: {
             format: "YYYY-MM-DD",
             "separator": " s/d ",

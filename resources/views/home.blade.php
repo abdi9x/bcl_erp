@@ -48,7 +48,7 @@ function convert($sum)
                                     <div class="row d-flex justify-content-center">
                                         <div class="col">
                                             <p class="text-dark mb-0 font-weight-semibold">Kamar Terisi</p>
-                                            <h3 class="m-0">{{$response->rooms->used.' dari '.$response->rooms->total}}</h3>
+                                            <h3 class="m-0">{{$response->rooms->kosong.' dari '.$response->rooms->total}}</h3>
                                             <p class="mb-0 text-truncate text-muted"> Kamar Terisi</p>
                                         </div>
                                         <div class="col-auto align-self-center">

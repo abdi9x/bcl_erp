@@ -28,7 +28,7 @@ $data = $data;
     </div><!--end col-->
 </div><!--end row-->
 
-@if($belum_lunas->count()>0)
+@if($belum_lunas->count()>0 or $belum_lunas->count()>0)
 <div class="row mb-2">
     <div class="col-lg-12">
         <div class="card">
@@ -58,22 +58,44 @@ $data = $data;
                         <tbody>
                             <?php
                             $no = 1;
-                            foreach ($belum_lunas as $value) {
+                            if ($belum_lunas->count() > 0) {
+                                foreach ($belum_lunas as $value) {
                             ?>
-                                <tr>
-                                    <td><?= $no ?></td>
-                                    <td><?= $value->tanggal ?></td>
-                                    <td><?= $value->doc_id ?></td>
-                                    <td><?= $value->identity == 'Sewa Kamar' ? 'Pendapatan Sewa' : 'Pendapatan Lain' ?></td>
-                                    <td><?= $value->catatan ?></td>
-                                    <td class="text-right">Rp <?= number_format($value->harga, 2) ?></td>
-                                    <td class="text-right text-danger font-weight-bold">Rp <?= number_format($value->kurang, 2) ?></td>
-                                    <th class="text-right">
-                                        <button class="btn btn-xs btn-success" onclick="terima('<?= $value->doc_id ?>')"><i class="mdi mdi-check"></i>Terima</button>
-                                    </th>
-                                </tr>
+                                    <tr>
+                                        <td><?= $no ?></td>
+                                        <td><?= $value->tanggal ?></td>
+                                        <td><?= $value->doc_id ?></td>
+                                        <td><?= $value->identity == 'Sewa Kamar' ? 'Pendapatan Sewa' : 'Pendapatan Lain' ?></td>
+                                        <td><?= $value->catatan ?></td>
+                                        <td class="text-right">Rp <?= number_format($value->harga, 2) ?></td>
+                                        <td class="text-right text-danger font-weight-bold">Rp <?= number_format($value->kurang, 2) ?></td>
+                                        <th class="text-right">
+                                            <button class="btn btn-xs btn-success" onclick="terima('<?= $value->doc_id ?>')"><i class="mdi mdi-check"></i>Terima</button>
+                                        </th>
+                                    </tr>
+                                <?php
+                                    $no++;
+                                }
+                            }
+                            if ($belum_lunas_extra->count() > 0) {
+                                $total_jurnal = 0;
+                                foreach ($belum_lunas_extra as $value) {
+                                    $total_harga = $value->harga * $value->lama_sewa * $value->qty;
+                                ?>
+                                    <tr>
+                                        <td><?= $no ?></td>
+                                        <td><?= $value->tgl_mulai ?></td>
+                                        <td><?= $value->kode ?></td>
+                                        <td><?= 'Tambahan Sewa' ?></td>
+                                        <td><?= $value->nama . ' ' . $value->lama_sewa . ' ' . $value->jangka_sewa . ' ' . $value->renter->nama ?></td>
+                                        <td class="text-right">Rp <?= number_format($total_harga, 2) ?></td>
+                                        <td class="text-right text-danger font-weight-bold">Rp <?= number_format($total_harga - ($value->total_kredit == null ? 0 : $value->total_kredit), 2) ?></td>
+                                        <th class="text-right">
+                                            <button class="btn btn-xs btn-success" onclick="terima('<?= $value->kode ?>')"><i class="mdi mdi-check"></i>Terima</button>
+                                        </th>
+                                    </tr>
                             <?php
-                                $no++;
+                                }
                             }
                             ?>
                         </tbody>
@@ -179,6 +201,7 @@ $data = $data;
             </div>
             <form method="POST" action="{{route('income.store')}}">
                 @csrf
+                <input type="hidden" id="section" name="section" value="">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-sm-6 col-xs-12">
@@ -189,7 +212,12 @@ $data = $data;
                                     <?php
                                     foreach ($belum_lunas as $value) {
                                     ?>
-                                        <option data-kurang="<?= $value->kurang ?>" value="<?= $value->doc_id ?>"><?= $value->doc_id . ' - ' . $value->catatan ?></option>
+                                        <option data-section="Sewa Kamar" data-kurang="<?= $value->kurang ?>" value="<?= $value->doc_id ?>"><?= $value->doc_id . ' - ' . $value->catatan ?></option>
+                                    <?php }
+                                    foreach ($belum_lunas_extra as $value) {
+                                        $total_harga = $value->harga * $value->lama_sewa * $value->qty;
+                                    ?>
+                                        <option data-section="Tambahan Sewa" data-kurang="<?= $total_harga - ($value->total_kredit == null ? 0 : $value->total_kredit) ?>" value="<?= $value->kode ?>"><?= $value->kode . ' - ' . $value->nama . ' ' . $value->lama_sewa . ' ' . $value->jangka_sewa ?></option>
                                     <?php } ?>
                                 </select>
                             </div>
@@ -232,7 +260,8 @@ $data = $data;
     $(document).ready(function() {
         var table_bb = $("#tb_kamar").DataTable({
             order: [
-                [1, 'DESC']
+                [3, 'ASC'],
+                [1, 'DESC'],
             ],
             // "paging": false,
             // "info": false,
@@ -347,6 +376,7 @@ $data = $data;
     });
     $("#filter_faktur").daterangepicker({
         // minDate: periode,
+        showDropdowns: true,
         locale: {
             format: "YYYY-MM-DD",
             "separator": " s/d ",
@@ -376,8 +406,10 @@ $data = $data;
         $('#f_filter_tgl').submit();
     });
     $('#transaksi').on('select2:select', function() {
-        console.log($(this).find(':selected').data('kurang'));
         var kurang = $(this).find(':selected').data('kurang');
+        var section = $(this).find(':selected').data('section');
+        $('#section').val(section);
+        console.log(section);
         $('#nominal').attr('data-inputmask-max', kurang);
         init_component();
     });

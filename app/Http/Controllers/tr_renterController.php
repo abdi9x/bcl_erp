@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\FinJurnalController as ControllersFinJurnalController;
+use App\Models\extra_pricelist;
 use App\Models\Fin_jurnal;
 use App\Models\Pricelist;
 use App\Models\renter;
 use App\Models\Rooms;
+use App\Models\tb_extra_rent;
 use App\Models\tr_renter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,9 +27,14 @@ class tr_renterController extends Controller
             $start = date('Y-m-d', strtotime('first day of january this year'));
             $end = date('Y-m-d', strtotime('last day of december this year'));
         }
-        $data = tr_renter::with('renter')->with('room')->whereBetween('tanggal', [$start, $end])->get();
+        $data = tr_renter::with('renter')->with('room')
+            ->with('tambahan')
+            ->whereBetween('tanggal', [$start, $end])->get();
+        // return response()->json($data);
         $category = DB::table('room_category')->get();
-        $rooms = Rooms::with('category')->get();
+        // $rooms = Rooms::with('category')->get();
+        $rooms = Rooms::with('category')->with('renter')->get();
+        // return response()->json($rooms);
         $renter = renter::all();
         $belum_lunas = Fin_jurnal::leftjoin('tr_renter', 'tr_renter.trans_id', '=', 'fin_jurnal.doc_id')
             ->leftjoin('renter', 'renter.id', '=', 'tr_renter.id_renter')
@@ -44,8 +51,30 @@ class tr_renterController extends Controller
             ->havingRaw('(tr_renter.harga - sum(kredit)) > 0')
             ->orderby('fin_jurnal.tanggal', 'DESC')
             ->get();
-        // return response()->json($data);
-        return view('transaksi.index', compact('belum_lunas', 'data', 'category', 'rooms', 'renter', 'start', 'end'));
+        $belum_lunas_extra = tb_extra_rent::withsum('jurnal as total_kredit', 'kredit')
+            ->groupby('id')
+            ->get()
+            ->filter(function ($item) {
+                return ($item->harga * $item->lama_sewa * $item->qty) - $item->total_kredit > 0;
+            });
+
+        foreach ($belum_lunas_extra as $val) {
+            $detail = tr_renter::where('trans_id', $val->parent_trans)->with('renter')->first();
+            $val->renter = $detail->renter;
+        }            // return response()->json($belum_lunas_extra);
+        $extra_pricelist = extra_pricelist::all();
+        // return response()->json($extra_pricelist);
+        return view('transaksi.index', compact(
+            'belum_lunas',
+            'belum_lunas_extra',
+            'data',
+            'category',
+            'rooms',
+            'renter',
+            'start',
+            'end',
+            'extra_pricelist'
+        ));
     }
 
     /**
@@ -68,25 +97,29 @@ class tr_renterController extends Controller
      */
     public function show(tr_renter $tr_renter, Request $request)
     {
-        $transaksi = tr_renter::with('renter')->with('room')
+        $transaksi = tr_renter::with('renter')
+            ->with('room')
             ->with('jurnal', function ($query) {
                 $query->leftjoin('users', 'users.id', '=', 'fin_jurnal.user_id');
                 $query->orderby('fin_jurnal.tanggal', 'ASC');
-            })
+            })->with('tambahan')
             ->where('trans_id', '=', $request->id)->first();
         return response()->json($transaksi);
     }
 
     public function cetak(tr_renter $tr_renter, Request $request)
     {
-        $transaksi = tr_renter::with('renter')->with('room', function ($query) {
-            $query->with('category');
-        })
+        $transaksi = tr_renter::with('renter')
+            ->with('room', function ($query) {
+                $query->with('category');
+            })
             ->with('jurnal', function ($query) {
                 $query->leftjoin('users', 'users.id', '=', 'fin_jurnal.user_id');
                 $query->orderby('fin_jurnal.tanggal', 'ASC');
             })
+            ->with('tambahan')
             ->where('trans_id', '=', $request->id)->first();
+
         return view('transaksi.cetak', compact('transaksi'));
         return response()->json($transaksi);
     }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\extra_rentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PricelistController;
 use App\Http\Controllers\RoomsController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\tr_renterController;
 use App\Http\Controllers\FinJurnalController;
 use App\Http\Controllers\InventoriesController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\pricelist_tambahanController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoomCategoryController;
 use App\Http\Controllers\RoomCategoryImageController;
@@ -84,6 +86,10 @@ Route::middleware('auth')->group(function () {
                 Route::post('/update', [PricelistController::class, 'update'])->name('pricelist.update');
             });
             Route::get('/rooms/{id}', [PricelistController::class, 'get_room_pricelist'])->name('pricelist.get_pl_room');
+            Route::post('/tambahanpl', [pricelist_tambahanController::class, 'store'])->name('extra_pl.store');
+            Route::get('/tambahanpl/edit/{id}', [pricelist_tambahanController::class, 'edit'])->name('extra_pl.edit');
+            Route::post('/tambahanpl/update', [pricelist_tambahanController::class, 'update'])->name('extra_pl.update');
+            Route::get('/tambahanpl/delete/{id}', [pricelist_tambahanController::class, 'destroy'])->name('extra_pl.delete');
         });
         Route::group(['middleware' => ['permission:Tambah Kamar|Edit Kamar|Hapus Kamar']], function () {
             Route::post('/rooms/store', [RoomsController::class, 'store'])->name('rooms.store');
@@ -107,6 +113,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/transaksi/refund', [tr_renterController::class, 'refund'])->name('transaksi.refund');
         Route::post('/transaksi/reschedule', [tr_renterController::class, 'reschedule'])->name('transaksi.reschedule');
         Route::get('/transaksi/cetak/{id}', [tr_renterController::class, 'cetak'])->name('transaksi.cetak');
+        Route::post('/extrarent/store', [extra_rentController::class, 'store'])->name('extrarent.store');
+       
     });
     Route::group(['middleware' => ['role:Administrator']], function () {
         route::get('/users', [UsersController::class, 'index'])->name('users.index');

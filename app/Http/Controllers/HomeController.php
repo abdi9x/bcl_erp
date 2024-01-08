@@ -32,18 +32,18 @@ class HomeController extends Controller
     public function index()
     {
         $data = Rooms::with('category')->with('renter')->get();
-        $room_used = 0;
+        $room_kosong = 0;
         foreach ($data as $value) {
-            if ($value->renter != null) {
-                $room_used++;
+            if ($value->renter == null) {
+                $room_kosong++;
             }
         }
         $response = new \stdClass();
         $rooms = new \stdClass();
         $rooms->total = $data->count();
-        $rooms->used = $room_used;
+        $rooms->kosong = $data->count()-$room_kosong;
         $response->rooms = $rooms;
-
+        // return response()->json($data);
         $belum_lunas = Fin_jurnal::leftjoin('tr_renter', 'tr_renter.trans_id', '=', 'fin_jurnal.doc_id')
             ->leftjoin('renter', 'renter.id', '=', 'tr_renter.id_renter')
             ->select(
