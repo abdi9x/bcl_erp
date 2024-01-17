@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\renter;
+use App\Models\room_category;
 use App\Models\Rooms;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -43,7 +44,7 @@ class RoomsController extends Controller
             ->groupBy('rooms.room_name')
             ->get();
         // return dd($data);
-        $category = DB::table('room_category')->get();
+        $category = room_category::all();
         // $rooms = Rooms::leftjoin('room_category', 'rooms.room_category', '=', 'room_category.id_category')
         //     ->select('rooms.*', 'room_category.category_name as category_name')->get();
         $rooms = Rooms::with('category')->get();
