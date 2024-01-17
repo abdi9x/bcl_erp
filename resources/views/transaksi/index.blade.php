@@ -162,7 +162,7 @@ $data = $data;
                                             <td class="text-center">{{ $no }}</td>
                                             <td class="text-center">{{ $data->tanggal }}</td>
                                             <td><u><a href="javascript:void(0)" data-id="{{$data->trans_id}}" class="dt_transaksi">{{$data->trans_id}}</a></u></td>
-                                            <td>{{$data->room->room_name}} <span class="badge badge-success">{{count($data->tambahan)>0?'+':''}}</span></td>
+                                            <td>{{$data->room->room_name??'Kamar dihapus'}} <span class="badge badge-success">{{count($data->tambahan)>0?'+':''}}</span></td>
                                             <td>{{$data->renter->nama}}</td>
                                             <td>{{$data->lama_sewa.' '.$data->jangka_sewa}}</td>
                                             <td>{{$data->tgl_mulai.' s/d '.$data->tgl_selesai}}</td>

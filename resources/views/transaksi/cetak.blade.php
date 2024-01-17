@@ -122,8 +122,8 @@ foreach ($transaksi->jurnal as $jurnal) {
                                             ?>
                                             <tr>
                                                 <td>{{$no}}</td>
-                                                <td>Sewa Kamar No {{$transaksi->room->room_name}}</td>
-                                                <td>{{$transaksi->room->category->category_name}}</td>
+                                                <td>Sewa Kamar No {{$transaksi->room->room_name??'Kamar dihapus'}}</td>
+                                                <td>{{$transaksi->room->category->category_name??'Dihapus'}}</td>
                                                 <td>{{$transaksi->lama_sewa.' '.$transaksi->jangka_sewa}}</td>
                                                 <td class="text-center">{{$transaksi->tgl_mulai}}</td>
                                                 <td class="text-center">{{$transaksi->tgl_selesai}}</td>
