@@ -15,7 +15,7 @@ class RoomsController extends Controller
      */
     public function index()
     {
-        $data = DB::table('rooms')->leftjoin('room_category', 'rooms.room_category', '=', 'room_category.id_category')
+        $data = Rooms::leftjoin('room_category', 'rooms.room_category', '=', 'room_category.id_category')
             ->leftjoin('tr_renter', function ($join) {
                 $join->on('rooms.id', '=', 'tr_renter.room_id')
                     ->where('tr_renter.tgl_mulai', '<=',  Carbon::now()->format('Y-m-d'))
