@@ -16,7 +16,7 @@ class RoomCategoryController extends Controller
     public function index()
     {
         $images = Room_Category_image::with('category')->get();
-        $categories = room_category::with('images')->get();
+        $categories = room_category::with('images')->withTrashed()->get();
         $rooms = Rooms::with('category')->get();
         // return response()->json($images);
         return view('category.index', compact('categories', 'images', 'rooms'));
@@ -65,6 +65,27 @@ class RoomCategoryController extends Controller
     {
         $data = room_category::with('images')->find($request->id);
         return response()->json($data);
+    }
+
+    public function restore($id)
+    {
+        try {
+            $data = room_category::withTrashed()->find($id);
+            $data->restore();
+            return back()->with('success', 'Data berhasil dikembalikan');
+        } catch (\Throwable $th) {
+            return back()->with('error', 'Data gagal dikembalikan');
+        }
+    }
+    public function forcedelete($id)
+    {
+        try {
+            $data = room_category::withTrashed()->find($id);
+            $data->forceDelete();
+            return back()->with('success', 'Data berhasil dihapus permanen');
+        } catch (\Throwable $th) {
+            return back()->with('error', 'Data gagal dihapus permanen');
+        }
     }
 
     /**

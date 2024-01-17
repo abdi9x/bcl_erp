@@ -102,6 +102,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/category/delete/{id}', [RoomCategoryController::class, 'destroy'])->name('category.delete');
             Route::post('/category/update', [RoomCategoryController::class, 'update'])->name('category.update');
             Route::post('/category/store', [RoomCategoryController::class, 'store'])->name('category.store');
+            Route::get('/category/restore/{id}', [RoomCategoryController::class, 'restore'])->name('category.restore');
+            Route::get('/category/forcedelete/{id}', [RoomCategoryController::class, 'forcedelete'])->name('category.forcedelete');
             Route::post('/images/store', [RoomCategoryImageController::class, 'store'])->name('images.store');
             Route::get('/images/delete/{id}', [RoomCategoryImageController::class, 'destroy'])->name('images.delete');
         });

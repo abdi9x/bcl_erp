@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Rooms extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
     // protected $primaryKey = 'id';
     protected $fillable = [
         'room_name',
@@ -26,7 +26,7 @@ class Rooms extends Model
 
     public function category()
     {
-        return $this->belongsTo(room_category::class, 'room_category');
+        return $this->belongsTo(room_category::class, 'room_category')->withTrashed();
     }
 
     public function renter()
@@ -36,5 +36,4 @@ class Rooms extends Model
             ->where('tgl_mulai', '<=', Carbon::now()->format('Y-m-d'))
             ->where('tgl_selesai', '>=', Carbon::now()->format('Y-m-d'));
     }
-    
 }

@@ -68,18 +68,30 @@ $categories = $categories;
                                         $no = 1;
                                         ?>
                                         @foreach($categories as $category)
-                                        <tr>
+                                        <tr class="@if($category->trashed()) text-muted @endif">
                                             <td class="text-center">{{ $no }}</td>
                                             <td class="">{{ $category->category_name }}</td>
                                             <td>{{$category->notes }}</td>
                                             <td>{{count($category->images)}}</td>
                                             <td class="text-right">
+                                                @if(!$category->trashed())
                                                 <a href="#" data-id="{{$category->id_category}}" class="btn btn-xs btn-outline-primary edit_category">
                                                     <i data-feather="edit" class="align-self-center icon-xs"></i>
                                                 </a>
+                                                @endif
+                                                @if($category->trashed())
+                                                <a href="{{route('category.restore',$category->id_category)}}" onclick="restore(event)" data-toggle="tooltip" data-original-title="Kembalikan, Dihapus pada {{$category->deleted_at}}" class="btn btn-xs btn-outline-success">
+                                                    <i data-feather="rotate-ccw" class="align-self-center icon-xs"></i>
+                                                </a>
+                                                <a href="{{route('category.forcedelete',$category->id_category)}}" onclick="forcedeletes(event)" data-toggle="tooltip" data-original-title="Hapus Permanen" class="btn btn-xs btn-outline-dark">
+                                                    <i data-feather="trash" class="align-self-center icon-xs"></i>
+                                                </a>
+                                                @endif
+                                                @if(!$category->trashed())
                                                 <a href="{{route('category.delete',$category->id_category)}}" onclick="deletes(event)" class="btn btn-xs btn-outline-danger">
                                                     <i data-feather="trash" class="align-self-center icon-xs"></i>
                                                 </a>
+                                                @endif
                                             </td>
                                         </tr>
                                         <?php $no++; ?>
@@ -375,11 +387,56 @@ $categories = $categories;
         var url = e.currentTarget.getAttribute('href');
         $.confirm({
             title: 'Hapus data ini?',
+            content: 'Aksi ini akan membuat data dihapus sementara',
+            buttons: {
+                confirm: {
+                    text: 'Ya',
+                    btnClass: 'btn-red',
+                    keys: ['enter'],
+                    action: function() {
+                        window.location.href = url;
+                    },
+                },
+                cancel: {
+                    text: 'Batal',
+                    action: function() {}
+                }
+            }
+        });
+    };
+    function forcedeletes(e) {
+        e.preventDefault();
+        var url = e.currentTarget.getAttribute('href');
+        $.confirm({
+            title: 'Hapus Permanen data ini?',
             content: 'Aksi ini tidak dapat diurungkan',
             buttons: {
                 confirm: {
                     text: 'Ya',
                     btnClass: 'btn-red',
+                    keys: ['enter'],
+                    action: function() {
+                        window.location.href = url;
+                    },
+                },
+                cancel: {
+                    text: 'Batal',
+                    action: function() {}
+                }
+            }
+        });
+    };
+
+    function restore(e) {
+        e.preventDefault();
+        var url = e.currentTarget.getAttribute('href');
+        $.confirm({
+            title: 'Pulihkan data ini?',
+            content: 'Aksi ini mengembalikan data yang telah dihapus',
+            buttons: {
+                confirm: {
+                    text: 'Ya',
+                    btnClass: 'btn-green',
                     keys: ['enter'],
                     action: function() {
                         window.location.href = url;
