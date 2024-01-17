@@ -48,9 +48,11 @@ class RoomsController extends Controller
         // $rooms = Rooms::leftjoin('room_category', 'rooms.room_category', '=', 'room_category.id_category')
         //     ->select('rooms.*', 'room_category.category_name as category_name')->get();
         $rooms = Rooms::with('category')->get();
+        $deleted = Rooms::onlyTrashed()->get();
         $renter = renter::all();
         // return response()->json($rooms);
-        return view('rooms.rooms')->with('data', $data)->with('category', $category)->with('renter', $renter)->with('base_room', $rooms);
+        return view('rooms.rooms')->with('data', $data)->with('category', $category)
+            ->with('renter', $renter)->with('base_room', $rooms)->with('deleted', $deleted);
     }
 
     /**
@@ -79,6 +81,17 @@ class RoomsController extends Controller
             return redirect()->route('rooms')->with(['success' => 'Data Kamar berhasil ditambahkan!']);
         } catch (\Throwable $th) {
             return redirect()->route('rooms')->with(['error' => $th->getMessage()]);
+        }
+    }
+
+    public function restore($id)
+    {
+        try {
+            $data = Rooms::onlyTrashed()->find($id);
+            $data->restore();
+            return back()->with('success', 'Data berhasil dikembalikan');
+        } catch (\Throwable $th) {
+            return back()->with('error', 'Data gagal dikembalikan');
         }
     }
 

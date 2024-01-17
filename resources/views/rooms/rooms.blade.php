@@ -18,7 +18,9 @@ $rooms = $data;
                     <span>{{config('app.name')}}</span>
                 </div><!--end col-->
                 <div class="col-auto align-self-center">
-
+                    <button class="btn btn-sm btn-dark waves-effect waves-light" data-toggle="modal" data-target="#md_deleted">
+                        <i class="mdi mdi-trash-can"></i> Kamar dihapus
+                    </button>
                     <button class="btn btn-sm btn-danger waves-effect waves-light" data-toggle="modal" data-target="#md_filter" id="bt_filter">
                         <i class="mdi mdi-plus"></i> Tambah Kamar
                     </button>
@@ -223,6 +225,50 @@ $rooms = $data;
                     <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="md_deleted" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h6 class="modal-title m-0 text-white" id="exampleModalDefaultLabel">Kamar Dihapus</h6>
+                <button type="button" class="close " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="la la-times"></i></span>
+                </button>
+            </div>
+            <div class="model-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-sm table-hover">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Kamar</th>
+                                    <th>Catatan</th>
+                                    <th>Dihapus pada</th>
+                                    <th class="text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($deleted as $del)
+                                <tr>
+                                    <td>{{$loop->iteration}}</td>
+                                    <td>{{$del->room_name}}</td>
+                                    <td>{{$del->notes}}</td>
+                                    <td>{{$del->deleted_at}}</td>
+                                    <td class="text-right">
+                                        <a href="{{route('rooms.restore',$del->id)}}" class="btn btn-xs btn-success">Restore</a>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

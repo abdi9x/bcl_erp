@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/rooms/edit/{id}', [RoomsController::class, 'edit'])->name('rooms.edit');
             Route::post('/rooms/update', [RoomsController::class, 'update'])->name('rooms.update');
             Route::get('/rooms/delete/{id}', [RoomsController::class, 'destroy'])->name('rooms.delete');
+            Route::get('/rooms/restore/{id}', [RoomsController::class, 'restore'])->name('rooms.restore');
 
             Route::get('/category', [RoomCategoryController::class, 'index'])->name('category');
             Route::get('/category/edit/{id}', [RoomCategoryController::class, 'edit'])->name('category.edit');
@@ -116,7 +117,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/transaksi/reschedule', [tr_renterController::class, 'reschedule'])->name('transaksi.reschedule');
         Route::get('/transaksi/cetak/{id}', [tr_renterController::class, 'cetak'])->name('transaksi.cetak');
         Route::post('/extrarent/store', [extra_rentController::class, 'store'])->name('extrarent.store');
-       
     });
     Route::group(['middleware' => ['role:Administrator']], function () {
         route::get('/users', [UsersController::class, 'index'])->name('users.index');
