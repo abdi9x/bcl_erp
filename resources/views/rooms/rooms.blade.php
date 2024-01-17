@@ -122,7 +122,7 @@ $rooms = $data;
                                                 @endcan
                                                 @can('Hapus Kamar')
                                                 <a href="{{route('rooms.delete',$room->id)}}" onclick="deletes(event)" class="btn btn-xs btn-outline-danger">
-                                                    <i data-feather="trash" class="align-self-center icon-xs"></i>
+                                                    <i data-feather="trash-2" class="align-self-center icon-xs"></i>
                                                 </a>
                                                 @endcan
                                             </td>
@@ -258,7 +258,7 @@ $rooms = $data;
                                     <td>{{$del->notes}}</td>
                                     <td>{{$del->deleted_at}}</td>
                                     <td class="text-right">
-                                        <a href="{{route('rooms.restore',$del->id)}}" class="btn btn-xs btn-success">Restore</a>
+                                        <a href="{{route('rooms.restore',$del->id)}}" class="btn btn-xs btn-success">Aktifkan</a>
                                     </td>
                                 </tr>
                                 @endforeach
