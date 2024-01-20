@@ -148,11 +148,15 @@ class tr_renterController extends Controller
         try {
             DB::beginTransaction();
             $transaksi = tr_renter::where('trans_id', $request->id)->get();
+            $extra = tb_extra_rent::where('parent_trans', $request->id)->get();
             $jurnal = Fin_jurnal::where('doc_id', $request->id)->get();
             foreach ($transaksi as $key => $value) {
                 $value->delete();
             }
             foreach ($jurnal as $key => $value) {
+                $value->delete();
+            }
+            foreach ($extra as $key => $value) {
                 $value->delete();
             }
             DB::commit();
