@@ -121,7 +121,7 @@ class tr_renterController extends Controller
             ->where('trans_id', '=', $request->id)->first();
 
         return view('transaksi.cetak', compact('transaksi'));
-        return response()->json($transaksi);
+        // return response()->json($transaksi);
     }
     /**
      * Show the form for editing the specified resource.
@@ -371,7 +371,8 @@ class tr_renterController extends Controller
             'BL-',
             DATE_FORMAT( STR_TO_DATE(now(), '%Y-%m-%d' ), '%m%y' ),
             '',
-        LPAD( count(*) + 1, 4, '0' )) AS no_trans 
+        LPAD( ifnull(max(RIGHT(trans_id,4)),0) + 1, 4, '0' )) AS no_trans 
+        -- LPAD( count(*) + 1, 4, '0' )) AS no_trans
         FROM
         tr_renter 
         WHERE

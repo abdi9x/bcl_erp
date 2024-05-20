@@ -15,6 +15,7 @@ use App\Http\Controllers\pricelist_tambahanController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoomCategoryController;
 use App\Http\Controllers\RoomCategoryImageController;
+use App\Http\Controllers\tb_testimoniController;
 use App\Http\Controllers\UsersController;
 
 /*
@@ -117,6 +118,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/transaksi/reschedule', [tr_renterController::class, 'reschedule'])->name('transaksi.reschedule');
         Route::get('/transaksi/cetak/{id}', [tr_renterController::class, 'cetak'])->name('transaksi.cetak');
         Route::post('/extrarent/store', [extra_rentController::class, 'store'])->name('extrarent.store');
+        Route::group(['prefix' => 'cms'], function () {
+            Route::get('/testimoni', [tb_testimoniController::class, 'index'])->name('testimoni.index');
+        });
     });
     Route::group(['middleware' => ['role:Administrator']], function () {
         route::get('/users', [UsersController::class, 'index'])->name('users.index');

@@ -137,7 +137,7 @@ foreach ($transaksi->jurnal as $jurnal) {
 
                                             @foreach($transaksi->tambahan as $tbh)
                                             <?php
-                                            $total_tbh += $tbh->harga;
+                                            $total_tbh += $tbh->harga*$tbh->qty*$tbh->lama_sewa;
 
                                             foreach ($tbh->jurnal as $jurnal) {
                                                 $total_dibayar += $jurnal->kredit;
@@ -150,7 +150,7 @@ foreach ($transaksi->jurnal as $jurnal) {
                                                 <td>{{$tbh->lama_sewa.' '.$tbh->jangka_sewa}}</td>
                                                 <td class="text-center">{{$tbh->tgl_mulai}}</td>
                                                 <td class="text-center">{{$tbh->tgl_selesai}}</td>
-                                                <td class="text-right">Rp {{number_format($tbh->harga,2)}}</td>
+                                                <td class="text-right">Rp {{number_format($tbh->harga*$tbh->qty*$tbh->lama_sewa,2)}}</td>
                                             </tr>
                                             @endforeach
                                             <tr>
@@ -228,7 +228,7 @@ foreach ($transaksi->jurnal as $jurnal) {
                             <!--end col-->
                             <div class="col-lg-12 col-xl-4">
                                 <div class="row float-right d-print-none">
-                                    <a class="btn btn-danger btn-sm" href="{{route('transaksi.index')}}"><i class="mdi mdi-download"></i> Kembali</a>
+                                    <a class="btn btn-danger btn-sm mr-2" href="{{route('transaksi.index')}}"><i class="mdi mdi-chevron-left"></i> Kembali</a>
                                     <button type="button" onclick="download_receipt()" class="btn btn-success btn-sm"><i class="mdi mdi-download"></i> Download</button>
                                 </div>
 

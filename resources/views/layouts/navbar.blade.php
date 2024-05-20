@@ -1,6 +1,6 @@
 <div class="menu-content h-100" data-simplebar>
     <ul class="metismenu left-sidenav-menu">
-        <li class="menu-label mt-0">Main</li>
+        <li class="menu-label mt-0">Back-end</li>
         <li>
             <a href="{{ route('home') }}"> <i data-feather="home" class="align-self-center menu-icon"></i><span>Home</span></a>
         </li>
@@ -30,7 +30,6 @@
         @endhasrole
         @hasrole('Keuangan|Admin Kamar|Administrator')
         <hr class="hr-dashed hr-menu">
-        <li class="menu-label my-2">Inventaris</li>
         <li>
             <a href="javascript: void(0);"><i data-feather="monitor" class="align-self-center menu-icon"></i><span>Inventaris</span><span class="menu-arrow"><i class="mdi mdi-chevron-right"></i></span></a>
             <ul class="nav-second-level" aria-expanded="false">
@@ -39,13 +38,21 @@
         </li>
         @endhasrole
         @hasrole('Keuangan|Admin Kamar|Administrator')
-        <hr class="hr-dashed hr-menu">
-        <li class="menu-label my-2">Keuangan</li>
         <li>
             <a href="javascript: void(0);"><i data-feather="book" class="align-self-center menu-icon"></i><span>Keuangan</span><span class="menu-arrow"><i class="mdi mdi-chevron-right"></i></span></a>
             <ul class="nav-second-level" aria-expanded="false">
                 <li class="nav-item"><a class="nav-link" href="{{route('income.index')}}"><i class="ti-control-record"></i>Pemasukan</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{route('expense.index')}}"><i class="ti-control-record"></i>Pengeluaran</a></li>
+            </ul>
+        </li>
+        @endhasrole
+        @hasrole('Keuangan|Admin Kamar|Administrator')
+        <hr class="hr-dashed hr-menu">
+        <li class="menu-label my-2">Front-End</li>
+        <li>
+            <a href="javascript: void(0);"><i data-feather="cast" class="align-self-center menu-icon"></i><span>CMS</span><span class="menu-arrow"><i class="mdi mdi-chevron-right"></i></span></a>
+            <ul class="nav-second-level" aria-expanded="false">
+                <li class="nav-item"><a class="nav-link" href="{{route('testimoni.index')}}"><i class="ti-control-record"></i>Testimoni</a></li>
             </ul>
         </li>
         @endhasrole

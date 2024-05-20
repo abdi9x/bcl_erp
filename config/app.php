@@ -21,8 +21,8 @@ return [
     'tagline2' => env('APP_TAGLINE2', 'Center Living'),
     'alamat' => 'Jl. Melon Raya No.1, Karangasem, Kec. Laweyan,',
     'alamat2' => ' Kota Surakarta, Jawa Tengah 57145',
-    'nama_rek' => 'Andhika Putri P',
-    'no_rek' => '1169260391',
+    'nama_rek' => 'CV.BELIA ABADI',
+    'no_rek' => '5513131515',
     /*
     |--------------------------------------------------------------------------
     | Application Environment

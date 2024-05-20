@@ -163,7 +163,7 @@ $data = $data;
                                             <td class="text-center">{{ $data->tanggal }}</td>
                                             <td><u><a href="javascript:void(0)" data-id="{{$data->trans_id}}" class="dt_transaksi">{{$data->trans_id}}</a></u></td>
                                             <td>{{$data->room->room_name??'Kamar dihapus'}} <span class="badge badge-success">{{count($data->tambahan)>0?'+':''}}</span></td>
-                                            <td>{{$data->renter->nama}}</td>
+                                            <td>{{$data->renter->nama??'N/a'}}</td>
                                             <td>{{$data->lama_sewa.' '.$data->jangka_sewa}}</td>
                                             <td>{{$data->tgl_mulai.' s/d '.$data->tgl_selesai}}</td>
                                             <td class="text-right text-nowrap">Rp {{number_format($data->harga,2)}} <a href="#" style="padding: 1px 10px;" data-toggle="dropdown" class="btn btn-xs btn-primary dropdown-toggle"><i class="fas fa-ellipsis-v"></i></a>

@@ -9,6 +9,43 @@ use carbon\carbon;
 $categories = $category;
 $rooms = $data;
 ?>
+<style>
+    .minimap {
+            width: 100%; /* Adjust width as needed */
+            height: 300px; /* Adjust height as needed */
+            border: 1px solid #ccc;
+            position: relative;
+            background: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* margin: 0 auto;  */
+        }
+
+        .room {
+            width: 30px; /* Adjust width of individual rooms */
+            height: 30px; /* Adjust height of individual rooms */
+            background-color: #007bff; /* Room color */
+            border: 2px solid #fff;
+            position: absolute;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0;
+        }
+
+        .room:hover {
+            transform: scale(1.1);
+        }
+
+        .label {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: #333;
+        }
+</style>
 <div class="row">
     <div class="col-sm-12">
         <div class="page-title-box">
@@ -29,7 +66,309 @@ $rooms = $data;
         </div><!--end page-title-box-->
     </div><!--end col-->
 </div><!--end row-->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header bg-dark">
+                <div class="row align-self-center">
+                    <div class="col align-self-center">
+                        <h4 class="card-title text-white">Drawing Kamar</h4>
+                    </div>
+                    <div class="col-auto align-self-center">
+                        <a href="#" class="btn btn-sm btn-light waves-effect waves-light dropdown-toggle" data-toggle="dropdown">
+                            <i class="far fa-file-alt"></i> Export <i class="las la-angle-down "></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-bottom side-color side-color-dark">
+                            <a class="dropdown-item btn_exls" href="#">Excel</a>
+                            <a class="dropdown-item btn_epdf" href="#">PDF</a>
+                            <a class="dropdown-item btn_eprint" href="#">Print</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="minimap">
+                    <!-- Example rooms -->
+                    <div class="room" style="top: 20px; left: 5px;"></div> <!-- Room 1 -->
+                    <div class="room" style="top: 20px; left: 35px;"></div> <!-- Room 2 -->
+                    <div class="room" style="top: 20px; left: 65px;"></div> <!-- Room 3 -->
+                    <div class="room" style="top: 60px; left: 5px;"></div> <!-- Room 4 -->
+                    <div class="room" style="top: 60px; left: 35px;"></div> <!-- Room 5 -->
+                    <div class="room" style="top: 60px; left: 65px;"></div> <!-- Room 6 -->
+                    <div class="room" style="top: 100px; left: 5px;"></div> <!-- Room 7 -->
+                    <div class="room" style="top: 100px; left: 35px;"></div> <!-- Room 8 -->
+                    <div class="room" style="top: 100px; left: 65px;"></div> <!-- Room 9 -->
+                </div>
+                <div class="tab-content" id="files-tabContent">
+                    <div class="tab-pane fade show active" id="files-projects">
+                        <h4 class="card-title mt-0 mb-3">Lantai 1</h4>
+                        <div class="file-box-content">
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information  file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="fas fa-home text-warning"></i>
+                                    <h6 class="text-truncate">C3</h6>
+                                    <small class="text-muted">Kosong</small>
+                                </div>
+                            </div>
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="fas fa-home text-warning"></i>
+                                    <h6 class="text-truncate">C2</h6>
+                                    <small class="text-muted">Kosong</small>
+                                </div>
+                            </div>
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="fas fa-home text-warning"></i>
+                                    <h6 class="text-truncate">C1</h6>
+                                    <small class="text-muted">Kosong</small>
+                                </div>
+                            </div>
+                        </div>
+                        <br class="mb-5">
+                        <h4 class="card-title mt-0 mb-3">Lantai 2</h4>
+                        <div class="file-box-content">
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information  file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="fas fa-home text-warning"></i>
+                                    <h6 class="text-truncate">C3</h6>
+                                    <small class="text-muted">Kosong</small>
+                                </div>
+                            </div>
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="fas fa-home text-warning"></i>
+                                    <h6 class="text-truncate">C2</h6>
+                                    <small class="text-muted">Kosong</small>
+                                </div>
+                            </div>
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="fas fa-home text-warning"></i>
+                                    <h6 class="text-truncate">C1</h6>
+                                    <small class="text-muted">Kosong</small>
+                                </div>
+                            </div>
+                        </div>
+                        <br class="mb-5">
+                        <div class="file-box-content">
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information  file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="fas fa-home text-warning"></i>
+                                    <h6 class="text-truncate">C3</h6>
+                                    <small class="text-muted">Kosong</small>
+                                </div>
+                            </div>
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="fas fa-home text-warning"></i>
+                                    <h6 class="text-truncate">C2</h6>
+                                    <small class="text-muted">Kosong</small>
+                                </div>
+                            </div>
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="fas fa-home text-warning"></i>
+                                    <h6 class="text-truncate">C1</h6>
+                                    <small class="text-muted">Kosong</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--end tab-pane-->
 
+                    <div class="tab-pane fade" id="files-pdf">
+                        <h4 class="mt-0 card-title mb-3">PDF Files</h4>
+                        <div class="file-box-content">
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="lar la-file-pdf text-info"></i>
+                                    <h6 class="text-truncate">Admin_Panel</h6>
+                                    <small class="text-muted">06 March 2019 / 5MB</small>
+                                </div>
+                            </div>
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="lar la-file-pdf text-danger"></i>
+                                    <h6 class="text-truncate">Ecommerce.pdf</h6>
+                                    <small class="text-muted">15 March 2019 / 8MB</small>
+                                </div>
+                            </div>
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="lar la-file-pdf text-warning"></i>
+                                    <h6 class="text-truncate">Payment_app.zip</h6>
+                                    <small class="text-muted">11 April 2019 / 10MB</small>
+                                </div>
+                            </div>
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="lar la-file-pdf text-secondary"></i>
+                                    <h6 class="text-truncate">App_landing_001.pdf</h6>
+                                    <small class="text-muted">06 March 2019 / 5MB</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--end tab-pane-->
+
+                    <div class="tab-pane fade" id="files-documents">
+                        <h4 class="mt-0 card-title mb-3">Documents</h4>
+                        <div class="file-box-content">
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="lar la-file-pdf text-info"></i>
+                                    <h6 class="text-truncate">Adharcard_update</h6>
+                                    <small class="text-muted">06 March 2019 / 5MB</small>
+                                </div>
+                            </div>
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="lar la-file-pdf text-danger"></i>
+                                    <h6 class="text-truncate">Pancard</h6>
+                                    <small class="text-muted">15 March 2019 / 8MB</small>
+                                </div>
+                            </div>
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="lar la-file-pdf text-warning"></i>
+                                    <h6 class="text-truncate">ICICI_statment</h6>
+                                    <small class="text-muted">11 April 2019 / 10MB</small>
+                                </div>
+                            </div>
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-information file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="lar la-file-pdf text-secondary"></i>
+                                    <h6 class="text-truncate">March_Invoice</h6>
+                                    <small class="text-muted">06 March 2019 / 5MB</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <h4 class="card-title my-3">Company Documents</h4>
+                            </div>
+                        </div>
+                        <div class="file-box-content">
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-download file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="lar la-file-pdf text-success"></i>
+                                    <h6 class="text-truncate">Adharcard_update</h6>
+                                    <small class="text-muted">06 March 2019 / 5MB</small>
+                                </div>
+                            </div>
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-download file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="lar la-file-pdf text-pink"></i>
+                                    <h6 class="text-truncate">Pancard</h6>
+                                    <small class="text-muted">15 March 2019 / 8MB</small>
+                                </div>
+                            </div>
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-download file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="lar la-file-pdf text-purple"></i>
+                                    <h6 class="text-truncate">ICICI_statment</h6>
+                                    <small class="text-muted">11 April 2019 / 10MB</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <h4 class="card-title my-3">Personal Documents</h4>
+                            </div>
+                        </div>
+                        <div class="file-box-content">
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-download file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="lar la-file-pdf text-blue"></i>
+                                    <h6 class="text-truncate">Adharcard_update</h6>
+                                    <small class="text-muted">06 March 2019 / 5MB</small>
+                                </div>
+                            </div>
+                            <div class="file-box">
+                                <a href="#" class="download-icon-link">
+                                    <i class="dripicons-download file-download-icon"></i>
+                                </a>
+                                <div class="text-center">
+                                    <i class="lar la-file-pdf text-dark"></i>
+                                    <h6 class="text-truncate">Pancard</h6>
+                                    <small class="text-muted">15 March 2019 / 8MB</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--end tab-pen-->
+
+                    <div class="tab-pane fade" id="files-hide">
+                        <h4 class="mt-0 card-title mb-3">Hide</h4>
+                    </div><!--end tab-pane-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
